@@ -4,6 +4,7 @@ def inital_setup():
 #Locations
   action('CreatePlace(Blacksmith,Blacksmith)')
   action('CreatePlace(Camp,Camp)')
+  action('CreatePlace(ForestPath,ForestPath)')
 
 # Characters
 
