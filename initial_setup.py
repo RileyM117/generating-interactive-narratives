@@ -29,6 +29,39 @@ def inital_setup():
   action('SetPosition(Smithy,Blacksmith.Anvil)')
   action('Face(Smithy,Blacksmith.Anvil)')
 
+# Louis (Antagonist)
+  action('CreateCharacter(Louis,D)')
+  action('SetHairStyle(Louis, Long)')
+  action('SetEyeColor(Louis,green)')
+  action('SetClothing(Louis,Merchant)')
+  action('SetHairColor(Louis,black)')
+  action('SetSkinColor(Louis,1)')
+  action('SetExpression(Louis,neutral)')
+  action('SetPosition(Louis,Camp.LeftLog)')
+  action('Sit(Louis,Camp.LeftLog)')
+
+#Clark (Extra)
+  action('CreateCharacter(Clark,H)')
+  action('SetHairStyle(Clark, Musketeer)')
+  action('SetEyeColor(Clark,brown)')
+  action('SetClothing(Clark,Bandit)')
+  action('SetHairColor(Clark,black)')
+  action('SetSkinColor(Clark,1)')
+  action('SetExpression(Clark,neutral)')
+  action('SetPosition(Clark,Camp.Barrel)')
+
+
+# Cassandra (Leader)
+  action('CreateCharacter(Cassadnra,A)')
+  action('SetHairStyle(Cassandra, Long)')
+  action('SetEyeColor(Cassandra,blue)')
+  action('SetClothing(Cassandra,Noble)')
+  action('SetHairColor(Cassandra,blonde)')
+  action('SetSkinColor(Cassandra,5)')
+  action('SetExpression(Cassandra,neutral)')
+  action('SetPosition(Cassandra,Camp.RightLog)')
+  action('Sit(Cassandra,Camp.RightLog)')  
+
 # Items
 
 # Smithy Sword
