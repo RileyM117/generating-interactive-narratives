@@ -53,7 +53,7 @@ def inital_setup():
 
 
 # Cassandra (Leader)
-  action('CreateCharacter(Cassadnra,A)')
+  action('CreateCharacter(Cassandra,A)')
   action('SetHairStyle(Cassandra, Long)')
   action('SetEyeColor(Cassandra,blue)')
   action('SetClothing(Cassandra,Noble)')
