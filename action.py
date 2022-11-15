@@ -1,3 +1,5 @@
+# Simple command function probably needs wait param
+
 def action(command):
       print('start ' + command)
       while(True):
