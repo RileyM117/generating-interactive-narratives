@@ -1,6 +1,7 @@
 # Protagonist house (camp) scene
 # In this scene, the smithy arrives to tell Cassandra about his missing gem
-# This scene provides further setup for the narrative and some characterization.
+# Cassandra orders Louis, Clark, and the Protagonist to find the gem
+# This scene provides further setup for the narrative and some characterization
 
 def Protag_house_setup():
   action('Enter(Smithy,Camp.Exit)')
