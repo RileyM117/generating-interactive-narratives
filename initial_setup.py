@@ -2,22 +2,24 @@
 def inital_setup():
 
 #Locations
+ # Creates the Blacksmith's shop, the Protagonist's home (Camp) and a path to investigate.
   action('CreatePlace(Blacksmith,Blacksmith)')
   action('CreatePlace(Camp,Camp)')
   action('CreatePlace(ForestPath,ForestPath)')
 
 # Characters
-
+ # This defines the characteristics of the characters.
+  
 # Protag
-  action('CreateCharacter(Protag,B)')
-  action('SetHairStyle(Protag, Spiky)')
-  action('SetEyeColor(Protag,blue)')
-  action('SetClothing(Protag,LightArmour)')
-  action('SetHairColor(Protag,red)')
-  action('SetSkinColor(Protag,5)')
-  action('SetExpression(Protag,neutral)')
-  action('SetPosition(Protag,Camp.Log)')
-  action('Sit(Protag,Camp.Log)')
+  action('CreateCharacter(Protag,B)') # Creates character with name "Protag" with body type B
+  action('SetHairStyle(Protag, Spiky)') # Gives Protag the Spiky Hairstyle
+  action('SetEyeColor(Protag,blue)') # Gives Protag blue eyes
+  action('SetClothing(Protag,LightArmour)') #Gives Protag Light Armor for clothing
+  action('SetHairColor(Protag,red)') # Gives Protag red hair
+  action('SetSkinColor(Protag,5)') # Gives Protag fair skin (Skin color is defined on a scale from 0-10 with 0 being very pale and 10 being very dark).
+  action('SetExpression(Protag,neutral)') # Sets Protag's facial expression to neutral
+  action('SetPosition(Protag,Camp.Log)') # Sets Protag's initial position to the default log in the Camp location
+  action('Sit(Protag,Camp.Log)') # Makes Protag sit on the default log in the Camp
 
 # Blacksmith
   action('CreateCharacter(Smithy,F)')
@@ -28,7 +30,7 @@ def inital_setup():
   action('SetSkinColor(Smithy,3)')
   action('SetExpression(Smithy,happy)')
   action('SetPosition(Smithy,Blacksmith.Anvil)')
-  action('Face(Smithy,Blacksmith.Anvil)')
+  action('Face(Smithy,Blacksmith.Anvil)') # Makes Smithy look at the anvil in the Blacksmith's shop
 
 # Louis (Antagonist)
   action('CreateCharacter(Louis,D)')
@@ -64,11 +66,11 @@ def inital_setup():
   action('Sit(Cassandra,Camp.RightLog)')  
 
 # Items
-
+ # Create Items and set their intial positions
 # Smithy Sword
-  action('CreateItem(Sword,Sword)')
-  action('SetPosition(Sword,Blacksmith.Anvil)')
+  action('CreateItem(Sword,Sword)') # Creates a Sword
+  action('SetPosition(Sword,Blacksmith.Anvil)') # Places the Sword on the anvil in Blacksmith's shop
 
 # Smithy Hammer
-  action('CreateItem(hammer,Hammer)')
-  action('SetPosition(hammer,Smithy)')
+  action('CreateItem(hammer,Hammer)') # Creates a hammer
+  action('SetPosition(hammer,Smithy)') # Sets hammer in Blacksmith's left hand
