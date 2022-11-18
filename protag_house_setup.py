@@ -51,7 +51,4 @@ def Protag_house_setup():
   action('Exit(Louis,Camp.Exit)')
   action('Exit(Clark,Camp.Exit)')
   action('Exit(Protag,Camp.Exit)')
-  action('Enter(Louis,Camp.Exit)')
-  action('Enter(Clark,Camp.Exit)')
-  action('Enter(Protag,Camp.Exit)')
 
