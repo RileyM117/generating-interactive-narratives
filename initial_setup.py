@@ -74,3 +74,7 @@ def inital_setup():
 # Smithy Hammer
   action('CreateItem(hammer,Hammer)') # Creates a hammer
   action('SetPosition(hammer,Smithy)') # Sets hammer in Blacksmith's left hand
+  
+  # Scroll with drawing of Smithy's gem
+  action('CreateItem(Scroll,Scroll)')
+  action('SetPosition(Scroll,Camp.Barrel)') # Sets scroll on the barrel at the Camp.
