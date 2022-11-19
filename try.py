@@ -21,7 +21,10 @@ action('CreatePlace(Camp,Camp)')
 action('CreatePlace(ForestPath,ForestPath)')
 action('CreatePlace(Ruins,Ruins)')
 
-# Characters
+#Show start menu:
+print("start ShowMenu()",flush=True)
+
+# Generate Characters
 
 # Protag
 action('CreateCharacter(Protag,B)')
@@ -78,9 +81,7 @@ action('SetExpression(Cassandra,neutral)')
 action('SetPosition(Cassandra,Camp.RightLog)')
 action('Sit(Cassandra,Camp.RightLog)')
 
-print("start ShowMenu()",flush=True)
-
-  # Witch
+# Witch
 action('CreateCharacter(Witch,G)')
 action('SetHairStyle(Witch, Short)')
 action('SetEyeColor(Witch,green)')
@@ -89,7 +90,7 @@ action('SetHairColor(Witch,black)')
 action('SetSkinColor(Witch,3)')
 action('SetExpression(Witch,neutral)')
 
-# Items
+# Generate Items
 
 # Smithy Sword
 action('CreateItem(Sword,Sword)')
@@ -104,8 +105,7 @@ action('CreateItem(gem,JewelKey)')
 
 
 # Blacksmith shop scene
-
-#customize camera and sounds and time of day
+# In this scene, the blacksmith realizes his gem is missing from his chest and goes to get help from our heroes.
 action('SetCameraFocus(Smithy)')
 action('HideMenu()')
 action('Putdown(Smithy,hammer)')
@@ -127,8 +127,7 @@ action('FadeOut()')
       
 
 # Protagonist house (camp) scene
-
-#customize camera and sounds and time of day
+#In this scene, the scharacters are assigned to go find the gemstone, and set out together to do so.
 action('SetCameraFocus(Protag)')
 action('FadeIn()')
 action('Enter(Smithy,Camp.Exit,True)')
@@ -180,10 +179,9 @@ time.sleep(5)
 action('SetNarration("Clark: Fine.")')
 time.sleep(3)
 action('HideNarration()')
-  # end day, possibly FadeOut()?
 action('FadeOut()')
-  
-  # next day, possibly fadein()
+
+#Next morning, same location:
 action('WalkTo(Cassandra,Camp.Exit)')
 action('FadeIn()')
 action('Face(Protag,Cassandra)')
@@ -223,6 +221,8 @@ action('Exit(Protag,Camp.Exit,True)')
 action('FadeOut()')
 time.sleep(5)
 
+#Forest Path Scene
+#In this scene, the protaganist discovers more evidence that something is off about Louis.
 action('Enter(Louis,ForestPath.EastEnd)')
 action('Enter(Clark,ForestPath.EastEnd)')
 action('Enter(Protag,ForestPath.EastEnd)')
@@ -240,7 +240,7 @@ action('SetNarration("Louis: Hmm... let me get a closer look.")')
 time.sleep(5)
 action('HideNarration()')
 action('Kneel(Louis)')
-    
+#Discovering the scroll:
 action('CreateItem(Scroll,Scroll)')
 action('SetPosition(Scroll,ForestPath.Plant)')
 time.sleep(3)
@@ -254,7 +254,8 @@ action('SetNarration("This is the seal of Anglancia! Why does Louis have this? I
 time.sleep(5)
 action('HideNarration()')
 action('AddToList(Scroll, "A scroll that you took from Louis. It has the seal of an enemy country on it.")')
-    
+
+#Moving on to next location:    
 action('ShowNarration()')
 action('SetNarration("Clark: Ugh, I am done with this. It is obviously Nightivy, and we are not eating any. Come on.")')
 time.sleep(5)
@@ -270,6 +271,8 @@ action('Exit(Clark,ForestPath.WestEnd)')
 action('Exit(Protag,ForestPath.WestEnd,True)')
 action('FadeOut()')
 
+#Ruins Scene
+#In this scene, we confront the witch who is in posession of the gemstone. 
 action('SetPosition(Witch,Ruins.Altar.Behind)')
 action('SetPosition(gem,Ruins.Altar)')
 action('Enter(Protag,Ruins.Exit)')
@@ -329,7 +332,7 @@ action('Exit(Clark,Ruins.Exit)')
 action('Exit(Protag,Ruins.Exit,True)')
 action('FadeOut()')
 
-
+#We return successfully to the blacksmith with his treasure, and use the evidence we have collected to reveal Louis's true intentions.
 action('SetPosition(Smithy,Blacksmith.Anvil)')
 action('SetPosition(Cassandra,Blacksmith.Target)')
 action('SetPosition(Louis,Blacksmith.Table)')
@@ -380,9 +383,4 @@ action('ShowNarration()')
 action('SetNarration("Cassandra: Great job, Protag. I dont know what would have happened if you hadnt figured that out!")')
 time.sleep(5)
 action('SetNarration("The End!")')
-time.sleep(20)
-action('Fadeout()')
-
-
-
-
+time.sleep(10)
