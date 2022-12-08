@@ -9,17 +9,17 @@ class Character(object):
         self.eye_color = eye_color    # Character eye color
         self.skin_color = skin_color    # Character skin color
     def set_name_body(self):
-      return self.entity,self.body_type
+      return self.name,self.body_type
     def set_hairstyle(self):
-      return self.entity,self.hairstyle
+      return self.name,self.hairstyle
     def set_outfit(self):
-      return self.entity,self.outfit
+      return self.name,self.outfit
     def set_hair_color(self):
-      return self.entity,self.hair_color
+      return self.name,self.hair_color
     def set_eye_color(self):
-      return self.entity,self.eye_color
+      return self.name,self.eye_color
     def set_skin_color(self):
-      return self.entity,self.skin_color
+      return self.name,self.skin_color
     def __repr__(self):
       # returns character attributes in format: name,body_type,hairstyle,outfit,hair_color,eye_color,skin_color
       return f"{self.name},{self.body_type},{self.hairstyle},{self.outfit},{self.hair_color},{self.eye_color},{self.skin_color}"
