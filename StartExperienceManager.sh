@@ -1,1 +1,1 @@
-python3 /Users/haileydusablon/Desktop/Camelot/try.py
+python3 /Users/haileydusablon/Desktop/Camelot/m4demo.py
