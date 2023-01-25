@@ -23,3 +23,26 @@ class CreateCharacter(object):
       self.skin_color = 0
     # return attributes in list format
     return [self.name,self.body_type,self.hairstyle,self.outfit,self.hair_color,self.eye_color,self.skin_color] 
+  
+class CreateEffect(object):
+  def __init__(self,effect_target,effect_name = None):
+    self.effect_target = effect_target
+    self.effect_name = None if effect_name is None else effect_name
+  def get(self):
+    if self.effect_name == None:
+      self.effect_name = 'Diamond'
+    return [self.effect_target,self.effect_name]
+  
+class CreateItem(object): 
+  def __init__(self,name,itype):
+    self.name =  name
+    self.itype = itype
+  def get(self):
+    return [self.name,self.itype]
+  
+class CreatePlace(object):
+  def __init__(self,place,ptype):
+    self.place = place
+    self.ptype = ptype
+  def get(self):
+    return [self.place,self.ptype]
