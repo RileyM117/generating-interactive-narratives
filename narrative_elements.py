@@ -1,4 +1,5 @@
 # Creation of characters, items, places, etc... as objects
+from creation import CreateCharacter, CreateEffect, CreateItem, CreatePlace
 
 # atttributes in the format: name, body type, hairstyle, outfit, hair color, eye color, skin color.
 protag = CreateCharacter('Protag','B','Spiky','LightArmour','red','blue',5).get() 
