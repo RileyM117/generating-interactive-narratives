@@ -1,17 +1,5 @@
 import time
-# Simple command function probably needs wait param
-
-def action(command):
-      print('start ' + command)
-      while(True):
-        i = input()
-        if(i == 'succeeded ' + command):
-          return True
-        elif(i == 'failed ' + command):
-          return False
-        elif(i.startswith('error')):
-          return False
-
+from action import action
 
 # Create Characters,items,locations, and set initial positions.
 #Locations
