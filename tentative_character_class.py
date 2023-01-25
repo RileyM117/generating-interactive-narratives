@@ -1,25 +1,25 @@
 # Class to define character attributes
-class Character(object):
-    def __init__(self, name, body_type, hairstyle, outfit, hair_color, eye_color, skin_color):
-        self.name = name    # Character name
-        self.body_type = body_type    # Character body type
-        self.hairstyle = hairstyle    # Character hairstyle
-        self.outfit = outfit    # Character outfit
-        self.hair_color = hair_color    # Character hair color
-        self.eye_color = eye_color    # Character eye color
-        self.skin_color = skin_color    # Character skin color
-    def set_name_body(self):
-      return self.name,self.body_type
-    def set_hairstyle(self):
-      return self.name,self.hairstyle
-    def set_outfit(self):
-      return self.name,self.outfit
-    def set_hair_color(self):
-      return self.name,self.hair_color
-    def set_eye_color(self):
-      return self.name,self.eye_color
-    def set_skin_color(self):
-      return self.name,self.skin_color
-    def __repr__(self):
-      # returns character attributes in format: name,body_type,hairstyle,outfit,hair_color,eye_color,skin_color
-      return f"{self.name},{self.body_type},{self.hairstyle},{self.outfit},{self.hair_color},{self.eye_color},{self.skin_color}"
+class CreateCharacter(object):
+  def __init__(self, name, body_type = None, hairstyle = None, outfit = None, hair_color = None, eye_color = None, skin_color = None):
+    self.name = name  # name not set to None because it does not have default value
+    self.body_type = None if body_type is None else body_type 
+    self.hairstyle = None if hairstyle is None else hairstyle  
+    self.outfit = None if outfit is None else outfit   
+    self.hair_color = None if hair_color is None else hair_color    
+    self.eye_color = None if eye_color is None else eye_color    
+    self.skin_color = None if skin_color is None else skin_color
+  def get(self):
+    if self.body_type == None: # setting default body_type
+      self.body_type = 'A'  
+    if self.hairstyle == None: # default hairstyle
+      self.hairstyle = 'bald'
+    if self.outfit == None:  # default outfit
+      self.outfit = 'naked'
+    if self.hair_color == None:  # default hair_color
+      self.hair_color = 'black'
+    if self.eye_color == None:  # default eye_color
+      self.eye_color = 'black' 
+    if self.skin_color == None:  # default skin_color
+      self.skin_color = 0
+    # return attributes in list format
+    return [self.name,self.body_type,self.hairstyle,self.outfit,self.hair_color,self.eye_color,self.skin_color] 
