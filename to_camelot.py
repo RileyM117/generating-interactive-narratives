@@ -1,4 +1,4 @@
-from narrative import action
+from action import action
 from creation import CreateCharacter, CreateEffect, CreateItem, CreatePlace
 
 # atttributes in the format: name, body type, hairstyle, outfit, hair color, eye color, skin color.
