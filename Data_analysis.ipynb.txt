@@ -1,0 +1,337 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: lxml in c:\\programdata\\anaconda3\\lib\\site-packages (4.5.0)\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "WARNING: Ignoring invalid distribution -ryptography (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution - (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution -cikit-learn (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution -ryptography (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution - (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution -cikit-learn (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution -ryptography (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution - (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution -cikit-learn (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution -ryptography (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution - (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution -cikit-learn (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution -ryptography (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution - (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution -cikit-learn (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution -ryptography (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution - (c:\\programdata\\anaconda3\\lib\\site-packages)\n",
+      "WARNING: Ignoring invalid distribution -cikit-learn (c:\\programdata\\anaconda3\\lib\\site-packages)\n"
+     ]
+    }
+   ],
+   "source": [
+    "!pip3 install lxml\n",
+    "from bs4 import BeautifulSoup as bs\n",
+    "from bs4 import NavigableString, Tag\n",
+    "import requests as requests\n",
+    "import pandas as pd\n",
+    "import re\n",
+    "import numpy as np\n",
+    "import lxml as lx\n",
+    "import matplotlib as mpl\n",
+    "from datetime import date\n",
+    "%matplotlib inline\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "url = 'https://www.helpingwritersbecomeauthors.com/book-storystructure/story-structure-database-index/'\n",
+    "headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}\n",
+    "\n",
+    "response = requests.get(url, headers=headers)\n",
+    "responseText = response.text\n",
+    "# Getting html content using beautiful soup\n",
+    "soup = bs(responseText, 'html.parser')\n",
+    "\n",
+    "#Making List of all the links for story entries\n",
+    "links = []\n",
+    "\n",
+    "for link in soup.find(\"div\", {\"class\":\"entry-content\"}).find_all('a'):\n",
+    "    links.append(link.get('href'))\n",
+    "\n",
+    "#removes \"None\" entries\n",
+    "final = []\n",
+    "for val in links:\n",
+    "    if val != None :\n",
+    "        final.append(val)\n",
+    "\n",
+    "#removes links that redirect to other parts in the same page\n",
+    "substring = '#'\n",
+    "links = [item for item in final if substring not in item]\n",
+    "#Removing unavailable entry\n",
+    "substring = 'thirteen'\n",
+    "links = [item for item in links if substring not in item]\n",
+    "\n",
+    " "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Title</th>\n",
+       "      <th>Content</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>About a Boy</td>\n",
+       "      <td>Book: By Nick Hornby.\\nInciting Event: Will pr...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>The Adventures of Tom Sawyer</td>\n",
+       "      <td>Inciting Event: Tom sees Becky Thatcher move t...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Agent to the Stars</td>\n",
+       "      <td>Book: By John Scalzi.\\nInciting Event: Rising ...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>The Age of Innocence</td>\n",
+       "      <td>Book: By Edith Wharton.\\nInciting Event: When ...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>The Ambassadors</td>\n",
+       "      <td>Inciting Event: Struther arrives in Paris to f...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>411</th>\n",
+       "      <td>X-Men Origins: Wolverine</td>\n",
+       "      <td>Inciting Event: Logan leaves Stryker’s team.\\n...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>412</th>\n",
+       "      <td>Zootopia</td>\n",
+       "      <td>Movie: Directed by Byron Howard, Rich Moore, J...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>413</th>\n",
+       "      <td>Fever (Short Story)</td>\n",
+       "      <td>Inciting Event: At the beginning of the story,...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>414</th>\n",
+       "      <td>A Temporary Matter (Short Story)</td>\n",
+       "      <td>Inciting Event: The stillbirth of the couple’s...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>415</th>\n",
+       "      <td>Final Fantasy 7 (Video Game)</td>\n",
+       "      <td>Inciting Event: An old flame, Tifa, has asked ...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>416 rows × 2 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                Title  \\\n",
+       "0                         About a Boy   \n",
+       "1        The Adventures of Tom Sawyer   \n",
+       "2                  Agent to the Stars   \n",
+       "3                The Age of Innocence   \n",
+       "4                     The Ambassadors   \n",
+       "..                                ...   \n",
+       "411          X-Men Origins: Wolverine   \n",
+       "412                          Zootopia   \n",
+       "413               Fever (Short Story)   \n",
+       "414  A Temporary Matter (Short Story)   \n",
+       "415      Final Fantasy 7 (Video Game)   \n",
+       "\n",
+       "                                               Content  \n",
+       "0    Book: By Nick Hornby.\\nInciting Event: Will pr...  \n",
+       "1    Inciting Event: Tom sees Becky Thatcher move t...  \n",
+       "2    Book: By John Scalzi.\\nInciting Event: Rising ...  \n",
+       "3    Book: By Edith Wharton.\\nInciting Event: When ...  \n",
+       "4    Inciting Event: Struther arrives in Paris to f...  \n",
+       "..                                                 ...  \n",
+       "411  Inciting Event: Logan leaves Stryker’s team.\\n...  \n",
+       "412  Movie: Directed by Byron Howard, Rich Moore, J...  \n",
+       "413  Inciting Event: At the beginning of the story,...  \n",
+       "414  Inciting Event: The stillbirth of the couple’s...  \n",
+       "415  Inciting Event: An old flame, Tifa, has asked ...  \n",
+       "\n",
+       "[416 rows x 2 columns]"
+      ]
+     },
+     "execution_count": 44,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#Creating empty Pandas Dataframe and initializing columns\n",
+    "df = pd.DataFrame()\n",
+    "df[\"Title\"] = []\n",
+    "df[\"Content\"] = []\n",
+    "\n",
+    "i = 0\n",
+    "for link in links:\n",
+    "    url = link\n",
+    "    response = requests.get(url, headers=headers)\n",
+    "    responseText = response.text\n",
+    "    # Getting html content using beautiful soup\n",
+    "    soup = bs(responseText, 'html.parser')\n",
+    "    table = soup.find(\"h1\", attrs={'class': 'entry-title'})\n",
+    "    #print(table.get_text())\n",
+    "    df = df.append({\"Title\" : table.get_text()}, ignore_index=True)\n",
+    "    table = soup.find(\"div\", attrs={'class': 'entry-content'})\n",
+    "    df.loc[i, [\"Content\"]] = table.get_text()\n",
+    "    i += 1\n",
+    "    #df.append({\"Title\" : table}, ignore_index=True)\n",
+    "    #for tag in table:\n",
+    "        #print(tag.text.strip())\n",
+    "    #prettyTable = table.prettify()\n",
+    "    #for item in soup.find(\"div\", attrs={'class': 'entry-content'}).find_all('p'):\n",
+    "        #pass\n",
+    "        #df.append(item.get('href'))\n",
+    "        #print(item)\n",
+    "#print(table)\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'Inciting Event: Anakin Skywalker is assigned to protect Padmé Amidala after she is almost assassinated.\\nFirst Plot Point: A second assassination attempt leads to Anakin and Padmé hiding out on Naboo, where he begins a forbidden romance with her, thus breaking the Jedi code against forming attachments.\\nMeanwhile, Anakin’s mentor, Obi-Wan, tracks down clues about the assassins, which leads him to the planet Kamino, where he discovers an army of clones that was bred on request from a Jedi name Sifo-Dyas at the time Obi-Wan met Anakin as a child. The clones are all copies of the bounty hunter trying to kill Padmé.\\nFirst Pinch Point: Anakin discovers through disturbing dreams that his mother is suffering and may die soon. He goes to Tatooine with Padmé to try to save her, but he is too late. The abuse she suffered at the hands of the Sand People results in her death, moments after he finds her. In a rage, he kills the entire Sand People village. This starts him down the path to the Dark Side of the Force.\\nMidpoint: Obi-Wan follows the bounty hunter to the planet Geonosis and discovers a new Separatist droid army being created by Count Dooku, a former Jedi Master, who reveals that Darth Sidious is secretly controlling the Republic Senate. Obi-Wan notifies the Republic before being captured, and Chancellor Palpatine is given emergency executive powers to protect the Republic against the new threat. He uses these powers to deploy the clone army against the Separatists.\\nNot much of a pivot point for Anakin’s plot, here. He leaves Tatooine behind and goes to rescue Obi-Wan with Padmé.\\nSecond Pinch Point: Anakin and Padmé are captured in an attempt to rescue Obi-Wan. All three face death in the Geonosian arena. They manage to survive the gladiatorial battle long enough for Mace Windu and an army of Jedi to come to their aid in response to Obi-Wan’s previous message.\\nThird Plot Point: A huge battle erupts when the Jedi arrive, and Dooku and the Geonosians refuse to surrender. The bounty hunter is killed and Dooku escapes.\\nClimax: Anakin and Obi-Wan chase down Dooku, but Anakin has to make the difficult decision to leave Padmé behind when she falls out of the dropship. He and Obi-Wan fight Dooku to prevent him from fleeing the planet.\\nClimactic Moment: Dooku defeats Anakin, cutting off his arm, and beats Obi-Wan as well, then flees from Yoda before Padmé arrives to help. Dooku escapes with the Death Star plans that will cause the destruction of the planet Alderaan in Episode IV.\\nResolution: The Jedi Council learns about Darth Sidious controlling the Senate, even they don’t yet know his true identity. Chancellor Palpatine starts the Clone Wars. Anakin and Padmé are secretly wed on Naboo.\\nComments: This movie is not as bad as a lot of people say. It’s fairly decent. But I think it could have been much better if the Midpoint and Climax had resonated on the prime conflict and theme more clearly. They serve their purpose structurally, but don’t really drive home the main things the story is about and has been setting us up to care about. They only touch on them, in that we are worried whether Anakin will survive and be able to be with Padmé. The real conflict I kept tuning in for was Anakin’s struggle to maintain his humanity, but instead that’s the focus of Episode III. So the main conflict here is actually more about the Clone Wars themselves. Anakin’s story becomes a subplot, which really threw off my expectations.\\n(Submitted by Aaron McCausland.)\\n'"
+      ]
+     },
+     "execution_count": 49,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#display(df[0:50])\n",
+    "df.loc[355, \"Content\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#df = []\n",
+    "#for link in links[0:2]:\n",
+    "#    url = link\n",
+    "#    response = requests.get(url, headers=headers)\n",
+    "#    responseText = response.text\n",
+    "    # Getting html content using beautiful soup\n",
+    "#    soup = bs(responseText, 'html.parser')\n",
+    "#    table = soup.find(\"div\", {\"class\":\"post-wrap\"})\n",
+    "    #print(table)\n",
+    "    #for tag in table:\n",
+    "        #print(tag.get_text().strip())\n",
+    "    #prettyTable = table.prettify()\n",
+    "#    for item in soup.find(\"div\", {\"class\":\"entry-content\"}).find_all('p'):\n",
+    "#        pass\n",
+    "        #df.append(item.get('href'))\n",
+    "        #print(item)\n",
+    "#print(table)\n",
+    "\n",
+    "#response = requests.get(url)\n",
+    "#soup = BeautifulSoup(response.text, 'html.parser')\n",
+    "\n",
+    "#for body_child in soup.body.children:\n",
+    "#    if isinstance(body_child, NavigableString):\n",
+    "#        continue\n",
+    "#    if isinstance(body_child, Tag):\n",
+    "#        print(body_child.name)\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
