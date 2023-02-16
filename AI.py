@@ -29,3 +29,8 @@ story = re.sub(r"\s+", " ", story).strip()
 
 # Print the story
 print(story)
+
+# seperate story into sentences
+sentences = story.split(".")
+for sentence in sentences:
+  sentence = sentence.strip()
