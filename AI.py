@@ -34,3 +34,5 @@ print(story)
 sentences = story.split(".")
 for sentence in sentences:
   sentence = sentence.strip()
+
+# Ideally will tweak AI to generate entire stories that will adapt to user interaction. 
