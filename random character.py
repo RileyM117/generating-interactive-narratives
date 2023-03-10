@@ -1,3 +1,7 @@
+!pip install fantasynames
+import random
+import fantasynames as names
+
 class RandomCharacter(object):
   male_body_types = ['B','D','F','H']
   female_body_types = ['A','C','E','G']
