@@ -11,6 +11,7 @@ class RandomCharacter(object):
   outfits_female = ['Queen','Witch']
   outfits_male = ['King','Warlock']
   male_names_list = []
+  female_names_list = []
   i = 0
   while i < 100:
     male_names_list.append(names.human('male'))
