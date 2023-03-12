@@ -14,20 +14,12 @@ class RandomCharacter(object):
   outfits = ['Bandit','Beggar','HeavyArmour','LightArmour','Merchant','Naked','Noble','Peasant','Priest']
   outfits_female = ['Queen','Witch']
   outfits_male = ['King','Warlock']
-  male_names_list = []
-  female_names_list = []
-  i = 0
-  while i < 100:
-    male_names_list.append(names.human('male'))
-    i = i + 1
 
-  female_names_list = []
-  while i < 200:
-    female_names_list.append(names.human('female'))
-    i = i + 1
+  def __init__(self,name):
+    self.name = name
   def get_rand_male(self):
-    return [random.choice(self.male_names_list),random.choice(self.male_body_types),random.choice(self.eye_colors),random.choice(self.hair_colors),
-            random.choice(skin_colors),random.choice(self.hairstyles + self.hairstyles_male),random.choice(self.outfits + self.outfits_male)]
+    return [self.name,random.choice(self.male_body_types),random.choice(self.eye_colors),random.choice(self.hair_colors),
+            random.choice(self.skin_colors),random.choice(self.hairstyles + self.hairstyles_male),random.choice(self.outfits + self.outfits_male)]
   def get_rand_female(self):
-    return [random.choice(self.female_names_list),random.choice(self.female_body_types),random.choice(self.eye_colors),random.choice(self.hair_colors),
-            random.choice(skin_colors),random.choice(self.hairstyles + self.hairstyles_female),random.choice(self.outfits + self.outfits_female)]
+    return [self.name,random.choice(self.female_body_types),random.choice(self.eye_colors),random.choice(self.hair_colors),
+            random.choice(self.skin_colors),random.choice(self.hairstyles + self.hairstyles_female),random.choice(self.outfits + self.outfits_female)]
