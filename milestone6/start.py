@@ -139,3 +139,14 @@ for i in char_list:
 for i in char_list:
   if i.location in locations:
     action("SetPosition({},{})".format(i.name,i.location))
+    
+    
+    
+# POSSIBLY OPENS TEXT FILE FOR USER RESPONSE    
+file_path = "/content/file.txt"
+user_input = input()
+
+with open(file_path, "w") as file:
+    file.write(user_input)
+with open(file_path, "r") as file:
+    contents = file.read()
