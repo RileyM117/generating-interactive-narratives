@@ -76,7 +76,7 @@ class Character(object):
     self.location = new_loc
     return new_loc
     
-
+main_char = Character(names.human('female'),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),random.choice(outfits),'Camp')
 # blacksmith's
 blacksmith = Character(names.human('male'),'F','brown','black','Short_Beard',3,'Peasant','Blacksmith')
 #alchemyshop
@@ -120,7 +120,7 @@ barkeep = Character(names.human('male'),'B','green','blonde','Short',8,'Merchant
 drunk1 = Character(names.human('female'),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','Tavern')
 drunk2 = Character(names.human('male'),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Beggar','Tavern')
 
-char_list = [blacksmith,alchemist,bridge_rando1,bridge_rando2,king,queen,guard,city_rando1,city_rando2,
+char_list = [main_char,blacksmith,alchemist,bridge_rando1,bridge_rando2,king,queen,guard,city_rando1,city_rando2,
              city_rando3,beggar,cottage_rando1,noble1,noble2,noble3,merchant,dungeon_guard,prisoner,
              farmer,bandit,librarian,student,witch,bandit2,barkeep,drunk1,drunk2]
 
