@@ -53,7 +53,7 @@ while(True):
     #action('ShowDialogue()')
     
     # %%capture gpt_output --no-stderr
-    openai.api_key = os.getenv("OPENAI_API_KEY")
+    openai.api_key = os.getenv("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")
     completion = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
     messages=[
