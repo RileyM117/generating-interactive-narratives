@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import simpledialog
+import openai
+import os
 
 print("start ShowMenu()",flush=True)
 
