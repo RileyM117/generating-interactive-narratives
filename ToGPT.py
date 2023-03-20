@@ -41,25 +41,26 @@ while(True):
     ROOT.withdraw()
     USER_INP = simpledialog.askstring(title="Test", prompt="What's your Name?:")
     conversations.append(USER_INP)
-    print("Hello", USER_INP)
-    file_path = "C:/Users/Alex/file.txt"
-    user_input = input()
-    contents = ''
+    file_path = "outputc.txt"
     with open(file_path, "w") as file:
-      file.write(user_input)
-    with open(file_path, "r") as file:
-      contents = file.read()
-    #action('SetDialogue(contents)') 
-    #action('ShowDialogue()')
+      file.write(USER_INP)
+    #with open(file_path, "r") as file:
+    #  contents = file.read()
+    action('SetDialog('+str(USER_INP)+')') 
+    action('ShowDialog()')
     
     # %%capture gpt_output --no-stderr
-    openai.api_key = os.getenv("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")
+    os.environ["OPENAI_API_KEY"]="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"
+    openai.api_key = os.getenv("OPENAI_API_KEY")
     completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages=[
-    {"role": "user", "content": conversations + " respond angrily to this."}
+        model="gpt-3.5-turbo",
+        messages=[
+        {"role": "user", "content": "Hello! Testing!"}
         ]
     )
     story = completion.choices[0].message.content
+    with open('outputg.txt', 'w') as f:
+        f.write(str(story))
+        f.close()
     action("SetDialog({})".format(story))
     action("ShowDialog()")
