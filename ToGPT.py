@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import simpledialog
 import openai
 import os
+import time
 
 print("start ShowMenu()",flush=True)
 
@@ -39,28 +40,26 @@ while(True):
   if(i == 'input Talk to Jim'):
     ROOT = tk.Tk()
     ROOT.withdraw()
+    ask = ("What's your name?")
+    action("SetDialog("+ask+")") 
+    action('ShowDialog()')
     USER_INP = simpledialog.askstring(title="Test", prompt="What's your Name?:")
-    conversations.append(USER_INP)
-    file_path = "outputc.txt"
-    with open(file_path, "w") as file:
-      file.write(USER_INP)
-    #with open(file_path, "r") as file:
-    #  contents = file.read()
-    action('SetDialog('+str(USER_INP)+')') 
+    answer = str("Hello! My name is " + USER_INP)
+    conversations.append(answer)
+    action('SetDialog('+answer+')') 
     action('ShowDialog()')
     
-    # %%capture gpt_output --no-stderr
-    os.environ["OPENAI_API_KEY"]="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"
+    os.environ["OPENAI_API_KEY"]="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"
     openai.api_key = os.getenv("OPENAI_API_KEY")
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-        {"role": "user", "content": "Hello! Testing!"}
+        {"role": "user", "content":str(conversations) }
         ]
     )
     story = completion.choices[0].message.content
-    with open('outputg.txt', 'w') as f:
-        f.write(str(story))
-        f.close()
-    action("SetDialog({})".format(story))
+    action("SetDialog("+story+")")
     action("ShowDialog()")
+    time.sleep(10)
+    action("HideDialog()")
+    action('EnableInput')
