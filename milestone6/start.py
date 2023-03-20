@@ -1,6 +1,3 @@
-!pip install --upgrade pip
-!pip install openai
-!pip install fantasynames
 import os
 import openai
 import random
