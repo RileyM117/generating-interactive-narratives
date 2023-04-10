@@ -38,20 +38,20 @@ blacksmith = character(names.get_full_name(),'F','brown','black','Short_Beard',3
 #alchemyshop
 alchemist  = character(names.get_full_name(),'C','blue','blonde','Short',4,'Merchant','AlchemyShop')
 #bridge
-bridge_rando1 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),random.choice(outfits),'Bridge')
-bridge_rando2 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),random.choice(outfits),'Bridge')
+#bridge_rando1 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),random.choice(outfits),'Bridge')
+#bridge_rando2 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),random.choice(outfits),'Bridge')
 # castlebedroom
 king = character(names.get_full_name(),'H','blue','blonde','Musketeer_Beard',3,'King','GreatHall')
-queen = character(names.get_full_name(),'H','blue','red','Straight',3,'Queen','GreatHall')
+queen = character(names.get_full_name(),'G','blue','red','Straight',3,'Queen','GreatHall')
 #castlecrossroads
-guard = character(names.get_full_name(),'E','brown','brown','Ponytail',8,'HeavyArmour','CastleCrossroads')
+#guard = character(names.get_full_name(),'E','brown','brown','Ponytail',8,'HeavyArmour','CastleCrossroads')
 #city 
 city_rando1 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),random.choice(outfits),'City.Fountain')
 city_rando2 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),random.choice(outfits),'City.Bench')
 city_rando3 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),random.choice(outfits),'City')
 beggar = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Beggar','City.Barrel')
 #cottage
-cottage_rando1 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),random.choice(outfits),'Cottage')
+#cottage_rando1 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),random.choice(outfits),'Cottage')
 #courtyard
 noble1 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Noble','Courtyard')
 noble2 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Noble','Courtyard')
@@ -61,7 +61,7 @@ merchant = character(names.get_full_name(),random.choice(male_body_types),random
 dungeon_guard = character(names.get_full_name(),'B','brown','brown','Short',6,'HeavyArmour','Dungeon')
 prisoner = character(names.get_full_name(),'D','black','red','Long',8,'Naked','Dungeon')
 # farm
-farmer = character(names.get_full_name(),'D','black','black','Short',9,'Peasant','Farm')
+#farmer = character(names.get_full_name(),'D','black','black','Short',9,'Peasant','Farm')
 #forestpath
 bandit = character(names.get_full_name(),'H','red','red','Spiky',2,'Bandit','ForestPath.Well')
 #Library
@@ -76,9 +76,9 @@ barkeep = character(names.get_full_name(),'B','green','blonde','Short',8,'Mercha
 drunk1 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','Tavern')
 drunk2 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Beggar','Tavern')
 
-char_list = [main_char,blacksmith,alchemist,bridge_rando1,bridge_rando2,king,queen,guard,city_rando1,city_rando2,
-             city_rando3,beggar,cottage_rando1,noble1,noble2,noble3,merchant,dungeon_guard,prisoner,
-             farmer,bandit,librarian,student,witch,bandit2,barkeep,drunk1,drunk2]
+char_list = [main_char,blacksmith,alchemist,king,queen,city_rando1,city_rando2,
+             city_rando3,beggar,noble1,noble2,noble3,merchant,dungeon_guard,prisoner,
+             bandit,librarian,student,witch,bandit2,barkeep,drunk1,drunk2]
 
 for i in char_list:
   i.get_char()
