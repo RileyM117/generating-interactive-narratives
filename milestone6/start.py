@@ -1,4 +1,5 @@
 import random
+#from Character import char_list
 from Character import char_list
 def action(command):
     print('start ' + command)
@@ -11,19 +12,19 @@ def action(command):
         elif(i.startswith('error')):
             return False
 action("ShowMenu()")
-possible_locations = ['Bridge','CastleBedroom','Cottage','CastleCrossroads', 'Hallway',
-             'DiningRoom','Farm','Port',
-             'Storage']
+#possible_locations = ['Bridge','CastleBedroom','Cottage','CastleCrossroads', 'Hallway',
+#            'DiningRoom','Farm','Port',
+#             'Storage']
 definite_locations = ['AlchemyShop','Blacksmith','Camp','GreatHall','City','Courtyard','Dungeon','Tavern','ForestPath','SpookyPath','Ruins','Library']
 
-rand_locations = []
-num = random.randint(1, len(possible_locations))
+#rand_locations = []
+#num = random.randint(1, len(possible_locations))
 
-for i in range(num):
-    rand_str = random.choice(possible_locations)
-    rand_locations.append(rand_str)
+#for i in range(num):
+#    rand_str = random.choice(possible_locations)
+#    rand_locations.append(rand_str)
 
-all_locations = rand_locations + definite_locations
+all_locations = definite_locations #rand_locations + definite_locations
 
 locations = set(all_locations)
 
@@ -46,8 +47,8 @@ while(True):
   i = input()
   if(i == 'input Selected Start'):
    
-   action("Sit({},City.Bench)".format(char_list[9].name))
-   action("Face({},City.Fountain)".format(char_list[8].name))
+   action("Sit({},City.Bench)".format(char_list[6].name))
+   action("Face({},City.Fountain)".format(char_list[5].name))
    action('SetCameraFocus({})'.format(char_list[0].name))
    action('HideMenu()')
    action('EnableInput()')
@@ -59,4 +60,4 @@ while(True):
      action("SetPosition({},City.EastEnd)".format(char_list[0].name))
   if(i == 'input arrived ' + char_list[0].name +' position City.NorthEnd'):
      action("SetPosition({},SpookyPath.WestEnd)".format(char_list[0].name))
-   
+      
