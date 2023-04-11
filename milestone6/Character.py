@@ -79,7 +79,9 @@ drunk2 = character(names.get_full_name(),random.choice(female_body_types),random
 char_list = [main_char,blacksmith,alchemist,king,queen,city_rando1,city_rando2,
              city_rando3,beggar,noble1,noble2,noble3,merchant,dungeon_guard,prisoner,
              bandit,librarian,student,witch,bandit2,barkeep,drunk1,drunk2]
-
+char_names = [main_char.name,blacksmith.name,alchemist.name,king.name,queen.name,city_rando1.name,city_rando2.name,
+             city_rando3.name,beggar.name,noble1.name,noble2.name,noble3.name,merchant.name,dungeon_guard.name,prisoner.name,
+             bandit.name,librarian.name,student.name,witch.name,bandit2.name,barkeep.name,drunk1.name,drunk2.name]
 for i in char_list:
   i.get_char()
   i.set_loc()
