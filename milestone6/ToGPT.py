@@ -44,21 +44,22 @@ while(True):
     action("SetDialog("+ask+")") 
     action('ShowDialog()')
     USER_INP = simpledialog.askstring(title="Test", prompt="What's your Name?:")
-    answer = str("Hello! My name is " + USER_INP)
+    answer = str("Give me a story about " + USER_INP)
     conversations.append(answer)
     action('SetDialog('+answer+')') 
     action('ShowDialog()')
-    
-    os.environ["OPENAI_API_KEY"]="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"
+    os.environ["OPENAI_API_KEY"]="input key here!"
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-        {"role": "user", "content":str(conversations) }
-        ]
-    )
-    story = completion.choices[0].message.content
-    action("SetDialog("+story+")")
+    story = ""
+    while story == "":
+        completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+            {"role": "user", "content":str(conversations) }
+            ]
+        )
+        story = completion.choices[0].message.content
+    action("SetDialog(\""+story+"\")")
     action("ShowDialog()")
     time.sleep(10)
     action("HideDialog()")
