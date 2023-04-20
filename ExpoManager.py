@@ -23,7 +23,7 @@ def action(command):
 definite_locations = ['Camp','City','AlchemyShop','Blacksmith','GreatHall','Courtyard','Ruins','Tavern','Library']
 city_char = False
 init_prompt = "These are the characters you can use: " +  ', '.join(char_names[1:-1]) + ". These are the locations you can use: " + ', '.join(definite_locations) + ". Write an unsolved murder set in a medieval/fantasy setting using these characters and locations. Do not include an investigation or an investigator character. The mystery you write is unsolved. "
-os.environ["OPENAI_API_KEY"]="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"
+os.environ["OPENAI_API_KEY"]="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"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 completion = openai.ChatCompletion.create(
    model="gpt-3.5-turbo",
@@ -35,7 +35,7 @@ story = completion.choices[0].message.content
 with open("C:/Users/riley/OneDrive/Desktop/AIOutput.txt", "w") as f:
     response = f.write(story)
 
-os.environ["OPENAI_API_KEY"]="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"
+os.environ["OPENAI_API_KEY"]="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"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 completion = openai.ChatCompletion.create(
    model="gpt-3.5-turbo",
@@ -113,7 +113,7 @@ while(True):
      
         #
 
-        os.environ["OPENAI_API_KEY"]="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"
+        os.environ["OPENAI_API_KEY"]="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"
         openai.api_key = os.getenv("OPENAI_API_KEY")
         completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
