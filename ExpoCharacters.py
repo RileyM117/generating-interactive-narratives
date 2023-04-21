@@ -48,14 +48,14 @@ queen = character(names.get_full_name(),'G','blue','red','Straight',3,'Queen','G
 #city 
 city_rando1 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),random.choice(outfits),'City.Plant')
 city_rando2 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),random.choice(outfits),'City.Fountain')
-city_rando3 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),random.choice(outfits),'City.Horse')
-beggar = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Beggar','City.Alley')
+#city_rando3 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),random.choice(outfits),'City.Horse')
+#beggar = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Beggar','City.Alley')
 #cottage
 #cottage_rando1 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),random.choice(outfits),'Cottage')
 #courtyard
 noble1 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Noble','Courtyard')
-noble2 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Noble','Courtyard')
-noble3 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors), random.choice(hairstyles_female),random.choice(skin_colors),'Noble','Courtyard.Horse')
+#noble2 = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Noble','Courtyard')
+#noble3 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors), random.choice(hairstyles_female),random.choice(skin_colors),'Noble','Courtyard.Horse')
 merchant = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Merchant','Courtyard.BigStall.Right')
 #dungeon
 #dungeon_guard = character(names.get_full_name(),'B','brown','brown','Short',6,'HeavyArmour','Dungeon')
@@ -74,14 +74,14 @@ witch = character(names.get_full_name(),'G','white','gray','Spiky',1,'Witch','Ru
 #tavern
 barkeep = character(names.get_full_name(),'B','green','blonde','Short',8,'Merchant','Tavern.Bar.Behind')
 drunk1 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','Tavern.FrontLeftStool')
-drunk2 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Beggar','Tavern.FrontRightStool')
+#drunk2 = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Beggar','Tavern.FrontRightStool')
 
 char_list = [main_char,blacksmith,alchemist,king,queen,city_rando1,city_rando2,
-             city_rando3,beggar,noble1,noble2,noble3,merchant,witch,
-             librarian,student,barkeep,drunk1,drunk2]
+             noble1,merchant,witch,
+             librarian,student,barkeep,drunk1]
 char_names = [main_char.name,blacksmith.name,alchemist.name,king.name,queen.name,city_rando1.name,city_rando2.name,
-             city_rando3.name,beggar.name,noble1.name,noble2.name,noble3.name,merchant.name,witch.name,
-             librarian.name,student.name,barkeep.name,drunk1.name,drunk2.name]
+             noble1.name,merchant.name,witch.name,
+             librarian.name,student.name,barkeep.name,drunk1.name]
 for i in char_list:
   i.get_char()
   i.set_loc()
