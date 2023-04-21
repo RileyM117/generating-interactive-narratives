@@ -117,6 +117,11 @@ while(True):
                 story3 = story3.replace('"','')
                 action("SetDialog(\""+story3+"[Close|Close]\")")
                 action("SetRight(\""+j.name+"\")")
+
+                expression = gpt_call("This is a line of dialogue: " + story3 + "This is a list of expressions: " + char_expressions + "Choose the expression that best matches the dialogue. Only respond with that one word.")
+                expression = expression.replace('"','')
+                action("SetExpression(\""+j.name+"\",\""+expression+"\")")
+                
                 action("ShowDialog()")
                 conversations.append((char_list[0].name + ":"  + answer, j.name +":" + story3))
             else:
