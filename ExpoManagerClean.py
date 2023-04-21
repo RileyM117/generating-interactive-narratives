@@ -1,5 +1,4 @@
 #TODO: Notebook
-#TODO: Dialog prompts all need a "Close" option
 #TODO: Final Cutscene
 #TODO: Expressions
 
@@ -13,7 +12,8 @@ import os
 import time
 
 #OpenAI API Key:
-os.environ["OPENAI_API_KEY"] = "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"
+
+os.environ["OPENAI_API_KEY"] = "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"
 conversations = []
 
 #Basic Camelot action structure.
@@ -97,9 +97,6 @@ while(True):
         action("SetNarration(\""+story2+"\")")
         action('ShowNarration()')
 
-        action('EnableInput()')
-        action('EnableInput()')
-
 #Dialogue code.
     for j in char_list:
         if(i == 'input Talk to '+j.name+''): #For all characters but the king:
@@ -118,14 +115,9 @@ while(True):
                 #GPT call to generate character's response
                 story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + j.name + ". They say " + answer + ". Based on: " + story + " What does " + j.name + " say in response to the player in a dialog format?")
                 story3 = story3.replace('"','')
-                action("SetDialog(\""+story3+"\")")
+                action("SetDialog(\""+story3+"[Close|Close]\")")
                 action("SetRight(\""+j.name+"\")")
                 action("ShowDialog()")
-                time.sleep(7)
-                action("HideDialog()")
-
-                action('EnableInput()')
-                action("EnableInput()")
                 conversations.append((char_list[0].name + ":"  + answer, j.name +":" + story3))
             else:
                 #Can choose to start accusation process or speak to him like other NPCs.
@@ -167,6 +159,13 @@ while(True):
         
     if(i == 'input Close Narration'):
         action("HideNarration()")
+        action("EnableInput()")
+        action("EnableInput()")
+
+    if(i == 'input Selected Close'):
+        action("HideDialog()")
+        action("EnableInput()")
+
 
 #Beginning of accusation process (what happens when you tell the king you are ready to accuse).
     if i == "input Selected Yes":
@@ -198,14 +197,9 @@ while(True):
         action('ShowDialog()')
         story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + j.name + ". They say " + answer + ". Based on: " + story + " What does " + j.name + " say in response to the player in a dialogue format?")
         story3 = story3.replace('"','')
-        action("SetDialog(\""+story3+"\")")
+        action("SetDialog(\""+story3+"[Close|Close]\")")
         action("SetRight(\""+j.name+"\")")
         action("ShowDialog()")
-        time.sleep(7)
-        action("HideDialog()")
-
-        action('EnableInput()')
-        action("EnableInput()")
         conversations.append((char_list[0].name + ":"  + answer, j.name +":" + story3))
         
 #These if statements tie different parts of the map to different doors.
