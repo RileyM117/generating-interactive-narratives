@@ -125,7 +125,6 @@ while(True):
                 action("SetRight(\""+j.name+"\")")
                 action("SetLeft(\""+char_list[0].name+"\")")
                 action("ShowDialog()")
-                action("EnableInput()")
 
 #After you accuse someone:
        # if(i == "input Accuse " + j.name + " " + char_name[3]):
@@ -172,6 +171,7 @@ while(True):
         action('SetDialog("Alright. Right click me again to choose the murderer.[Understood|Understood]"')
     if i == "input Selected Understood":
         action('HideDialog()')
+        action('EnableInput()')
         action('DisableIcon("Talk to",' + char_names[3]+')')
         action('EnableIcon("Accuse '+char_names[1]+'", Forge,'+char_names[3]+', Accuse '+char_names[1]+')') #blacksmith
         action('EnableIcon("Accuse '+char_names[2]+'", Potion,'+char_names[3]+', Accuse '+char_names[2]+')') #alchemist
