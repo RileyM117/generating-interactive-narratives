@@ -66,3 +66,5 @@ for i in char_list:
   i.get_char()
   i.set_loc()
 
+#expressions to choose from
+char_expressions = ["neutral", "happy", "sad", "angry", "disgusted", "scared", "surprised", "asleep"]

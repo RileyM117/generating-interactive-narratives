@@ -1,19 +1,18 @@
 #TODO: Notebook
 #TODO: Final Cutscene
-#TODO: Expressions
 
 #Imports:
 import tkinter as tk
 from tkinter import simpledialog
 from ExpoCharacters import char_list
 from ExpoCharacters import char_names
+from ExpoCharacters import char_expressions
 import openai
 import os
 import time
 
 #OpenAI API Key:
-
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "sk-"
 conversations = []
 
 #Basic Camelot action structure.
@@ -113,10 +112,15 @@ while(True):
                 action('ShowDialog()')
 
                 #GPT call to generate character's response
-                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + j.name + ". They say " + answer + ". Based on: " + story + " What does " + j.name + " say in response to the player in a dialog format?")
+                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + j.name + ". They say " + answer + ". Based on: " + story + " Respond with only the words that " + j.name + " says to the player.")
                 story3 = story3.replace('"','')
-                action("SetDialog(\""+story3+"[Close|Close]\")")
+                action("SetDialog(\""+story3+" [Close|Close]\")")
                 action("SetRight(\""+j.name+"\")")
+
+                #GPT call to get character's expression
+                expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
+                action("SetExpression(\""+j.name+"\",\""+expression+"\")")
+
                 action("ShowDialog()")
                 conversations.append((char_list[0].name + ":"  + answer, j.name +":" + story3))
             else:
@@ -195,9 +199,9 @@ while(True):
         action("SetDialog(\""+char_list[0].name+answer+"\")")
         action("SetLeft(\""+char_list[0].name+"\")")
         action('ShowDialog()')
-        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + j.name + ". They say " + answer + ". Based on: " + story + " What does " + j.name + " say in response to the player in a dialogue format?")
+        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + j.name + ". They say " + answer + ". Based on: " + story + " Respond with only the words that " + j.name + " says to the player.")
         story3 = story3.replace('"','')
-        action("SetDialog(\""+story3+"[Close|Close]\")")
+        action("SetDialog(\""+story3+" [Close|Close]\")")
         action("SetRight(\""+j.name+"\")")
         action("ShowDialog()")
         conversations.append((char_list[0].name + ":"  + answer, j.name +":" + story3))
