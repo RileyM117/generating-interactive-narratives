@@ -13,7 +13,7 @@ import os
 import time
 
 #OpenAI API Key:
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 conversations = []
 
 #Basic Camelot action structure.
@@ -127,7 +127,7 @@ while(True):
                 action('EnableInput()')
                 action("EnableInput()")
                 conversations.append((char_list[0].name + ":"  + answer, j.name +":" + story3))
-            else: #For the king:
+            else:
                 #Can choose to start accusation process or speak to him like other NPCs.
                 action("SetDialog(\"" + j.name + ": Are you here to make an accusation? [Yes|Yes my lord.] [No|No my lord.]"+"\")")
                 action("SetRight(\""+j.name+"\")")
@@ -136,8 +136,8 @@ while(True):
                 action("EnableInput()")
 
 #After you accuse someone:
-            #if(i == "input Accuse " + j.name + char_name[3]):
-                #action("SetNarration('thank fucking god.')")
+       # if(i == "input Accuse " + j.name + " " + char_name[3]):
+        #    action("SetNarration('thank god.')")
 
 #Generates NPCs when the player leaves the camp in order to save on loading time at the beginning.
     if(i == 'input arrived ' + char_list[0].name + ' position Camp.Exit'):
