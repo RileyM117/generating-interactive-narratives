@@ -1,6 +1,5 @@
 #TODO: Notebook
 #TODO: Final Cutscene
-#TODO: Expressions
 
 #Imports:
 import tkinter as tk
