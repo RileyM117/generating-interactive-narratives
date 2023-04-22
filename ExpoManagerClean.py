@@ -1,5 +1,6 @@
 #TODO: Notebook
 #TODO: Final Cutscene
+#TODO: Fix Expressions
 
 #Imports:
 import tkinter as tk
@@ -13,7 +14,11 @@ import time
 
 #OpenAI API Key:
 os.environ["OPENAI_API_KEY"] = "sk-"
+
+#Initialization
 conversations = []
+player = char_list[0].name
+king = char_list[3].name
 
 #Basic Camelot action structure.
 def action(command):
@@ -61,7 +66,7 @@ for d in door_list:
 #First two GPT calls generate a secret story that GPT knows and an introductory narrative for the player.
 init_prompt = "These are the characters you can use: " +  ', '.join(char_names[1:-1]) + ". These are the locations you can use: " + ', '.join(definite_locations) + ". Write an unsolved murder set in a medieval/fantasy setting using these characters and locations. Do not include an investigation or an investigator character. The mystery you write is unsolved. "
 story = gpt_call(init_prompt)
-prompt2 = "This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + "Based on this story, provide a very short description to give to the player to initiate their investigation. The player is currently in the forest camp and should seek out other characters to gain clues from. When they want to accuse someone, they should go talk to the king in the Great Hall. Remember that they are trying to solve the murder, so do not give them too many details."
+prompt2 = "This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + "Based on this story, provide a very short description to give to the player to initiate their investigation. The player is currently in the forest camp and should seek out other characters to gain clues from. When they want to accuse someone, they should go talk to the king in the Great Hall. Tell the player all of this in a short description that doesn't give away the mystery. Respond only with the description."
 story2 = gpt_call(prompt2).strip()
 
 #Generates our notebook, and a prop for the blacksmith
@@ -83,15 +88,14 @@ print("start ShowMenu()",flush=True)
 
 #Things that need to happen after start button is pressed:
 while(True):
-    conversations = []
     i = input()
     if(i == 'input Selected Start'):
         for i in char_list[0:1]:
             action("SetPosition({},{})".format(i.name,i.location))
         action('EnableIcon("Review Conversations", Research,BlueBook, "Review Conversation",true)')
-
         action("SetPosition(Sword,Blacksmith.Anvil)")
-        action('SetCameraFocus('+char_list[0].name+')')
+        action('SetCameraFocus('+player+')')
+        action("EnableInput()")
         action('HideMenu()')
         action("SetNarration(\""+story2+"\")")
         action('ShowNarration()')
@@ -102,40 +106,91 @@ while(True):
             #A dialog box is created asking the user what they would like to say to the character they are interacting with.
             ROOT = tk.Tk()
             ROOT.withdraw()
-            if j.name != char_names[3]:
-                USER_INP = simpledialog.askstring(title="Test", prompt="What do you Say?:")
+            if j.name != king:
+                action("DisableInput()")
+                USER_INP = simpledialog.askstring(title="Response", prompt="What do you Say?:")
                 answer = str(USER_INP)
                 answer = answer.replace(',','')
 
-                action("SetDialog(\""+char_list[0].name+": " + answer+"\")")
-                action("SetLeft(\""+char_list[0].name+"\")")
+                action("SetDialog(\""+player+": " + answer+"\")")
+                action("SetLeft(\""+player+"\")")
                 action('ShowDialog()')
 
                 #GPT call to generate character's response
                 story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + j.name + ". They say " + answer + ". Based on: " + story + " Respond with only the words that " + j.name + " says to the player.")
                 story3 = story3.replace('"','')
-                action("SetDialog(\""+story3+" [Close|Close]\")")
+                action("SetDialog(\""+j.name+": "+story3+" [Close|Close]\")")
                 action("SetRight(\""+j.name+"\")")
 
                 #GPT call to get character's expression
-                expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
-                action("SetExpression(\""+j.name+"\",\""+expression+"\")")
+                #FIXME
+                #Causing lost connection to em
+                #expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
+                #action("SetExpression(\""+j.name+"\",\""+expression+"\")")
 
                 action("ShowDialog()")
-                conversations.append((char_list[0].name + ":"  + answer, j.name +":" + story3))
+                conversations.append(player + ": " + answer)
+                conversations.append(j.name + ": " + story3)
             else:
                 #Can choose to start accusation process or speak to him like other NPCs.
-                action("SetDialog(\"" + j.name + ": Are you here to make an accusation? [Yes|Yes my lord.] [No|No my lord.]"+"\")")
-                action("SetRight(\""+j.name+"\")")
-                action("SetLeft(\""+char_list[0].name+"\")")
+                action("SetDialog(\"" + king + ": Are you here to make an accusation? [Yes|Yes my lord.] [No|No my lord.]"+"\")")
+                action("SetRight(\""+king+"\")")
+                action("SetLeft(\""+player+"\")")
                 action("ShowDialog()")
+        
+    #After you accuse someone:
+        if(i == "input Accuse " + j.name + " " + king):
+            action("FadeOut()")
+            action("SetPosition("+j.name+",GreatHall.Supplicant)")
+            action("SetPosition("+char_names[0]+",GreatHall.LeftSupplicant)")
+            action("FadeIn()")
+            action("DisableInput()")
+            accuse = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". The player has accused "+ j.name+ "to the King, and that character is about to be put into jail. Respond with only the words that the king,"+ king+ "says to the accused.")
+            accuse = accuse.replace('"','')
+            action("SetDialog(\""+accuse+" [Close|Close]\")")
+            action("SetRight(\""+king+"\")")
+            action("ShowDialog()")
 
-#After you accuse someone:
-       # if(i == "input Accuse " + j.name + " " + char_name[3]):
-        #    action("SetNarration('thank god.')")
+#If you say no when the king asks you if you are here to make an accusation, you can talk to him like a normal character.
+    if i == "input Selected No":
+        action("SetDialog(\""+player+": No my lord."+"\")")
+        USER_INP = simpledialog.askstring(title="Response", prompt="What do you Say?:")
+        answer = str(USER_INP)
+        answer = answer.replace(',','')
+        action("SetDialog(\""+player+": " + answer+"\")")
+        action("SetLeft(\""+player+"\")")
+        action('ShowDialog()')
+        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + king + ". They say " + answer + ". Based on: " + story + " Respond with only the words that " + king + " says to the player.")
+        story3 = story3.replace('"','')
+        action("SetDialog(\""+king+": "+story3+" [Close|Close]\")")
+        action("SetRight(\""+king+"\")")
+        action("ShowDialog()")
+        conversations.append(player + ": " + answer)
+        conversations.append(king + ": " + story3)
+
+#Beginning of accusation process (what happens when you tell the king you are ready to accuse).
+    if i == "input Selected Yes":
+        action("SetDialog(\""+player+": Yes my lord."+"\")")
+        action('SetDialog("Alright. Right click me again to choose the murderer. [Understood|Understood]"')
+    if i == "input Selected Understood":
+        action('HideDialog()')
+        action('EnableInput()')
+        action('DisableIcon("Talk to",' + king+')')
+        action('EnableIcon("Accuse '+char_names[1]+'", Forge,'+king+', Accuse '+char_names[1]+')') #blacksmith
+        action('EnableIcon("Accuse '+char_names[2]+'", Potion,'+king+', Accuse '+char_names[2]+')') #alchemist
+        action('EnableIcon("Accuse '+char_names[3]+'", Throne,'+king+', Accuse '+char_names[3]+')') #king
+        action('EnableIcon("Accuse '+char_names[4]+'", Crown,'+king+', Accuse '+char_names[4]+')') #queen
+        action('EnableIcon("Accuse '+char_names[5]+'", Hand,'+king+', Accuse '+char_names[5]+')') #city_rando
+        action('EnableIcon("Accuse '+char_names[6]+'", Coins,'+king+', Accuse '+char_names[6]+')') #noble
+        action('EnableIcon("Accuse '+char_names[7]+'", Chest,'+king+', Accuse '+char_names[7]+')') #merchant
+        action('EnableIcon("Accuse '+char_names[8]+'", Cauldron,'+king+', Accuse '+char_names[8]+')') #witch
+        action('EnableIcon("Accuse '+char_names[9]+'", Book,'+king+', Accuse '+char_names[9]+')') #librarian
+        action('EnableIcon("Accuse '+char_names[10]+'", Scroll,'+king+', Accuse '+char_names[10]+')') #student
+        action('EnableIcon("Accuse '+char_names[11]+'", Mug,'+king+', Accuse '+char_names[11]+')') #barkeep
+        action('EnableIcon("Accuse '+char_names[12]+'", Flask,'+king+', Accuse '+char_names[12]+')') #drunk
 
 #Generates NPCs when the player leaves the camp in order to save on loading time at the beginning.
-    if(i == 'input arrived ' + char_list[0].name + ' position Camp.Exit'):
+    if(i == 'input arrived ' + player + ' position Camp.Exit'):
         moveTo("City")
         if city_char == False:
             for i in char_list[1:19]:
@@ -151,7 +206,7 @@ while(True):
 
 
     if(i == 'input Key Inventory'):
-        action("ShowList({})".format(char_list[0].name))
+        action("ShowList({})".format(player))
 
     if(i =='input Close List'):
         action("HideList()")
@@ -162,55 +217,20 @@ while(True):
         
     if(i == 'input Close Narration'):
         action("HideNarration()")
-        action("EnableInput()")
-        action("EnableInput()")
 
     if(i == 'input Selected Close'):
         action("HideDialog()")
+        action("ClearDialog()")
+        action("SetRight(null)")
+        action("SetLeft(null)")
         action("EnableInput()")
-
-
-#Beginning of accusation process (what happens when you tell the king you are ready to accuse).
-    if i == "input Selected Yes":
-        action('SetDialog("Alright. Right click me again to choose the murderer.[Understood|Understood]"')
-    if i == "input Selected Understood":
-        action('HideDialog()')
-        action('EnableInput()')
-        action('DisableIcon("Talk to",' + char_names[3]+')')
-        action('EnableIcon("Accuse '+char_names[1]+'", Forge,'+char_names[3]+', Accuse '+char_names[1]+')') #blacksmith
-        action('EnableIcon("Accuse '+char_names[2]+'", Potion,'+char_names[3]+', Accuse '+char_names[2]+')') #alchemist
-        action('EnableIcon("Accuse '+char_names[3]+'", Throne,'+char_names[3]+', Accuse '+char_names[3]+')') #king
-        action('EnableIcon("Accuse '+char_names[4]+'", Crown,'+char_names[3]+', Accuse '+char_names[4]+')') #queen
-        action('EnableIcon("Accuse '+char_names[5]+'", Hand,'+char_names[3]+', Accuse '+char_names[5]+')') #city_rando
-        action('EnableIcon("Accuse '+char_names[6]+'", Coins,'+char_names[3]+', Accuse '+char_names[6]+')') #noble
-        action('EnableIcon("Accuse '+char_names[7]+'", Chest,'+char_names[3]+', Accuse '+char_names[7]+')') #merchant
-        action('EnableIcon("Accuse '+char_names[8]+'", Cauldron,'+char_names[3]+', Accuse '+char_names[8]+')') #witch
-        action('EnableIcon("Accuse '+char_names[9]+'", Book,'+char_names[3]+', Accuse '+char_names[9]+')') #librarian
-        action('EnableIcon("Accuse '+char_names[10]+'", Scroll,'+char_names[3]+', Accuse '+char_names[10]+')') #student
-        action('EnableIcon("Accuse '+char_names[11]+'", Mug,'+char_names[3]+', Accuse '+char_names[11]+')') #barkeep
-        action('EnableIcon("Accuse '+char_names[12]+'", Flask,'+char_names[3]+', Accuse '+char_names[12]+')') #drunk
-
-#If you say no when the king asks you if you are here to make an accusation, you can talk to him like a normal character.
-    if i == "input Selected No":
-        USER_INP = simpledialog.askstring(title="Test", prompt="What do you Say?:")
-        answer = str(USER_INP)
-        answer = answer.replace(',','')
-
-        action("SetDialog(\""+char_list[0].name+answer+"\")")
-        action("SetLeft(\""+char_list[0].name+"\")")
-        action('ShowDialog()')
-        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + j.name + ". They say " + answer + ". Based on: " + story + " Respond with only the words that " + j.name + " says to the player.")
-        story3 = story3.replace('"','')
-        action("SetDialog(\""+story3+" [Close|Close]\")")
-        action("SetRight(\""+j.name+"\")")
-        action("ShowDialog()")
-        conversations.append((char_list[0].name + ":"  + answer, j.name +":" + story3))
+        action("EnableInput()")
         
 #These if statements tie different parts of the map to different doors.
     if(i == 'input Open Door City.BlueHouseDoor'):
         moveTo("AlchemyShop.Door")
     if(i == 'input Open Door AlchemyShop.Door'):
-        moveTo("BlueHouseDoor")
+        moveTo("City.BlueHouseDoor")
     if(i == 'input Open Door City.GreenHouseDoor'):
         moveTo("Library.Door")
     if(i == 'input Open Door Library.Door'):
@@ -222,18 +242,18 @@ while(True):
     if(i == 'input Open Door City.RedHouseDoor'):
         moveTo("Tavern.Door")
     if(i == 'input Open Door Tavern.Door'):
-        moveTo("RedHouseDoor")
-    if(i == 'input arrived ' + char_list[0].name + ' position City.EastEnd'):
+        moveTo("City.RedHouseDoor")
+    if(i == 'input arrived ' + player + ' position City.EastEnd'):
         moveTo("Camp.Exit")
-    if(i == 'input arrived ' + char_list[0].name + ' position City.WestEnd'):
+    if(i == 'input arrived ' + player + ' position City.WestEnd'):
         moveTo("Courtyard.Exit")
-    if(i == 'input arrived ' + char_list[0].name + ' position Courtyard.Exit'):
+    if(i == 'input arrived ' + player + ' position Courtyard.Exit'):
         moveTo("City.WestEnd")
-    if(i == 'input arrived ' + char_list[0].name + ' position Courtyard.Gate'):
+    if(i == 'input arrived ' + player + ' position Courtyard.Gate'):
         moveTo("GreatHall.Gate")
-    if(i == 'input arrived ' + char_list[0].name + ' position GreatHall.Gate'):
+    if(i == 'input arrived ' + player + ' position GreatHall.Gate'):
         moveTo("Courtyard.Gate")
-    if(i == 'input arrived ' + char_list[0].name + ' position City.NorthEnd'):
+    if(i == 'input arrived ' + player + ' position City.NorthEnd'):
         moveTo("Ruins.Exit")
-    if(i == 'input arrived ' + char_list[0].name + ' position Ruins.Exit'):
+    if(i == 'input arrived ' + player + ' position Ruins.Exit'):
         moveTo("City.NorthEnd")
