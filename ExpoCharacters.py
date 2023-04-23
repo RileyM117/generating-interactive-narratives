@@ -16,8 +16,9 @@ outfits_male = ['King','Warlock']
 
 #character class
 class character(object):
-  def __init__(self,name,body,eye_color,hair_color,hairstyle,skin_color,outfit,location):
+  def __init__(self,name,role,body,eye_color,hair_color,hairstyle,skin_color,outfit,location):
     self.name = name
+    self.role = role
     self.body = body
     self.eye_color = eye_color
     self.hair_color = hair_color
@@ -34,37 +35,39 @@ class character(object):
     return new_loc
     
 #Creates the characters for the expo demo. Some are randomly generated, some are set based on their roles
-main_char = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),random.choice(outfits),'Camp')
+main_char = character(names.get_full_name(),'main_char',random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),random.choice(outfits),'Camp')
 # Blacksmith's
-blacksmith = character(names.get_full_name(),'F','brown','black','Short_Beard',3,'Peasant','Blacksmith.Anvil')
+blacksmith = character(names.get_full_name(),'blacksmith','F','brown','black','Short_Beard',3,'Peasant','Blacksmith.Anvil')
 #Alchemy Shop
-alchemist  = character(names.get_full_name(),'C','blue','blonde','Short',4,'Merchant','AlchemyShop.Bar.Behind')
+alchemist  = character(names.get_full_name(),'alchemist','C','blue','blonde','Short',4,'Merchant','AlchemyShop.Bar.Behind')
 # GreatHall
-king = character(names.get_full_name(),'H','blue','blonde','Musketeer_Beard',3,'King','GreatHall.LeftThrone')
-queen = character(names.get_full_name(),'G','blue','red','Straight',3,'Queen','GreatHall.Throne')
+king = character(names.get_full_name(),'king','H','blue','blonde','Musketeer_Beard',3,'King','GreatHall.LeftThrone')
+queen = character(names.get_full_name(),'queen','G','blue','red','Straight',3,'Queen','GreatHall.Throne')
 #city 
-city_rando = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),random.choice(outfits),'City.Plant')
+city_rando = character(names.get_full_name(),'civilian',random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),random.choice(outfits),'City.Plant')
 #courtyard
-noble = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Noble','Courtyard')
-merchant = character(names.get_full_name(),random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Merchant','Courtyard.BigStall.Right')
+noble = character(names.get_full_name(),'noble',random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Noble','Courtyard')
+merchant = character(names.get_full_name(),'merchant',random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Merchant','Courtyard.BigStall.Right')
 #Library
-librarian = character(names.get_full_name(),'A','black','blonde','Short',7,'Peasant','Library.Chair')
-student = character(names.get_full_name(),'A','green','black','Long',4,'Noble','Library.SpellBook')
+librarian = character(names.get_full_name(),'librarian','A','black','blonde','Short',7,'Peasant','Library.Chair')
+student = character(names.get_full_name(),'student','A','green','black','Long',4,'Noble','Library.SpellBook')
 #ruins
-witch = character(names.get_full_name(),'G','white','gray','Spiky',1,'Witch','Ruins.Throne')
+witch = character(names.get_full_name(),'witch','G','white','gray','Spiky',1,'Witch','Ruins.Throne')
 #tavern
-barkeep = character(names.get_full_name(),'B','green','blonde','Short',8,'Merchant','Tavern.Bar.Behind')
-drunk = character(names.get_full_name(),random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','Tavern.FrontLeftStool')
+barkeep = character(names.get_full_name(),'barkeep','B','green','blonde','Short',8,'Merchant','Tavern.Bar.Behind')
+drunk = character(names.get_full_name(),'drunk',random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','Tavern.FrontLeftStool')
 
 
 char_list = [main_char,blacksmith,alchemist,king,queen,city_rando,noble,merchant,witch,
              librarian,student,barkeep,drunk]
 char_names = [main_char.name,blacksmith.name,alchemist.name,king.name,queen.name,city_rando.name,noble.name,merchant.name,witch.name,
              librarian.name,student.name,barkeep.name,drunk.name]
+gpt_char_list = []
+
+for i in range(len(char_list)):
+  char = (char_names[i], char_list[i].role)
+  gpt_char_list.append(', the '.join(char))
 
 for i in char_list:
   i.get_char()
   i.set_loc()
-
-#expressions to choose from
-char_expressions = ["neutral", "happy", "sad", "angry", "disgusted", "scared", "surprised", "asleep"]

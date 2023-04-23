@@ -7,7 +7,7 @@ import tkinter as tk
 from tkinter import simpledialog
 from ExpoCharacters import char_list
 from ExpoCharacters import char_names
-from ExpoCharacters import char_expressions
+from ExpoCharacters import gpt_char_list
 import openai
 import os
 import time
@@ -64,7 +64,7 @@ for d in door_list:
     door_icon(d)
 
 #First two GPT calls generate a secret story that GPT knows and an introductory narrative for the player.
-init_prompt = "These are the characters you can use: " +  ', '.join(char_names[1:-1]) + ". These are the locations you can use: " + ', '.join(definite_locations) + ". Write an unsolved murder set in a medieval/fantasy setting using these characters and locations. Do not include an investigation or an investigator character. The mystery you write is unsolved. "
+init_prompt = "These are the characters you can use: " +  ', '.join(gpt_char_list[1:]) + ". These are the locations you can use: " + ', '.join(definite_locations) + ". Write an unsolved murder mystery set in a medieval/fantasy setting using these characters and locations. Do not include an investigation or an investigator character. The murder should remain unsolved, but you should know who the murderer is."
 story = gpt_call(init_prompt)
 prompt2 = "This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + "Based on this story, provide a very short description to give to the player to initiate their investigation. The player is currently in the forest camp and should seek out other characters to gain clues from. When they want to accuse someone, they should go talk to the king in the Great Hall. Tell the player all of this in a short description that doesn't give away the mystery. Respond only with the description."
 story2 = gpt_call(prompt2).strip()
@@ -117,18 +117,16 @@ while(True):
                 action('ShowDialog()')
 
                 #GPT call to generate character's response
-                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + j.name + ". They say " + answer + ". Based on: " + story + " Respond with only the words that " + j.name + " says to the player.")
+                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + j.name + ", the " + j.role + ". They say " + answer + ". Based on: " + story + " Respond with only the words that " + j.name + " says to the player.")
                 story3 = story3.replace('"','')
+                #time.sleep(10)
+                #expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
+                #expression = expression.replace('"', '')
+                #action("SetExpression(\""+j.name+"\",\""+expression+"\")")
                 action("SetDialog(\""+j.name+": "+story3+" [Close|Close]\")")
                 action("SetRight(\""+j.name+"\")")
-
-                #GPT call to get character's expression
-                #FIXME
-                #Causing lost connection to em
-                #expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
-                #action("SetExpression(\""+j.name+"\",\""+expression+"\")")
-
                 action("ShowDialog()")
+
                 conversations.append(player + ": " + answer)
                 conversations.append(j.name + ": " + story3)
             else:
@@ -145,7 +143,7 @@ while(True):
             action("SetPosition("+char_names[0]+",GreatHall.LeftSupplicant)")
             action("FadeIn()")
             action("DisableInput()")
-            accuse = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". The player has accused "+ j.name+ "to the King, and that character is about to be put into jail. Respond with only the words that the king,"+ king+ "says to the accused.")
+            accuse = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". The player has accused " + j.name + ", the " + j.role + ", to the King, and that character is about to be put into jail. Respond with only the words that the king, " + king + ", says to the accused.")
             accuse = accuse.replace('"','')
             action("SetDialog(\""+accuse+" [Close|Close]\")")
             action("SetRight(\""+king+"\")")
@@ -154,17 +152,20 @@ while(True):
 #If you say no when the king asks you if you are here to make an accusation, you can talk to him like a normal character.
     if i == "input Selected No":
         action("SetDialog(\""+player+": No my lord."+"\")")
+
         USER_INP = simpledialog.askstring(title="Response", prompt="What do you Say?:")
         answer = str(USER_INP)
         answer = answer.replace(',','')
         action("SetDialog(\""+player+": " + answer+"\")")
         action("SetLeft(\""+player+"\")")
         action('ShowDialog()')
-        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + king + ". They say " + answer + ". Based on: " + story + " Respond with only the words that " + king + " says to the player.")
+
+        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + king + ", the king. They say " + answer + ". Based on: " + story + " Respond with only the words that the king says to the player.")
         story3 = story3.replace('"','')
         action("SetDialog(\""+king+": "+story3+" [Close|Close]\")")
         action("SetRight(\""+king+"\")")
         action("ShowDialog()")
+
         conversations.append(player + ": " + answer)
         conversations.append(king + ": " + story3)
 
@@ -172,6 +173,7 @@ while(True):
     if i == "input Selected Yes":
         action("SetDialog(\""+player+": Yes my lord."+"\")")
         action('SetDialog("Alright. Right click me again to choose the murderer. [Understood|Understood]"')
+
     if i == "input Selected Understood":
         action('HideDialog()')
         action('EnableInput()')
@@ -204,11 +206,10 @@ while(True):
                 action('EnableIcon("Talk to", Talk,'+i.name+', "Talk to '+i.name+'")')
                 city_char = True;
 
-
     if(i == 'input Key Inventory'):
         action("ShowList({})".format(player))
 
-    if(i =='input Close List'):
+    if(i == 'input Close List'):
         action("HideList()")
 
     if(i == 'input Review Conversations BlueBook'):
