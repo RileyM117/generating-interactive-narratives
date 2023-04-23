@@ -9,6 +9,7 @@ from ExpoCharacters import char_list
 from ExpoCharacters import char_names
 from ExpoCharacters import gpt_char_list
 import openai
+import backoff
 import os
 import time
 
@@ -33,6 +34,7 @@ def action(command):
             return False
 
 #Code that is used to make a call to the GPT API and get a response based on the prompt variable. Takes in prompt and returns GPT response.
+@backoff.on_exception(backoff.constant, openai.error.RateLimitError, jitter=None, interval=0.01) #prevents crashes from rate limiting by automatically retrying
 def gpt_call(prompt):
     openai.api_key = os.getenv("OPENAI_API_KEY")
     completion = openai.ChatCompletion.create(
@@ -44,6 +46,7 @@ def gpt_call(prompt):
     comp = completion.choices[0].message.content
     comp = comp.replace('\n', ' ')
     comp = comp.replace('\r', '')
+    comp = comp.strip()
     return(comp)
 
 #Enable icons open icon on doors
@@ -67,7 +70,7 @@ for d in door_list:
 init_prompt = "These are the characters you can use: " +  ', '.join(gpt_char_list[1:]) + ". These are the locations you can use: " + ', '.join(definite_locations) + ". Write an unsolved murder mystery set in a medieval/fantasy setting using these characters and locations. Do not include an investigation or an investigator character. The murder should remain unsolved, but you should know who the murderer is."
 story = gpt_call(init_prompt)
 prompt2 = "This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + "Based on this story, provide a very short description to give to the player to initiate their investigation. The player is currently in the forest camp and should seek out other characters to gain clues from. When they want to accuse someone, they should go talk to the king in the Great Hall. Tell the player all of this in a short description that doesn't give away the mystery. Respond only with the description."
-story2 = gpt_call(prompt2).strip()
+story2 = gpt_call(prompt2)
 
 #Generates our notebook, and a prop for the blacksmith
 action("CreateItem(Sword,Sword)")
@@ -102,13 +105,13 @@ while(True):
 
 #Dialogue code.
     for j in char_list:
-        if(i == 'input Talk to '+j.name+''): #For all characters but the king:
+        if(i == 'input Talk to ' + j.name): #For all characters but the king:
             #A dialog box is created asking the user what they would like to say to the character they are interacting with.
             ROOT = tk.Tk()
             ROOT.withdraw()
             if j.name != king:
                 action("DisableInput()")
-                USER_INP = simpledialog.askstring(title="Response", prompt="What do you Say?:")
+                USER_INP = simpledialog.askstring(title="Response", prompt="What do you Say?:\t\t\t")
                 answer = str(USER_INP)
                 answer = answer.replace(',','')
 
@@ -117,12 +120,11 @@ while(True):
                 action('ShowDialog()')
 
                 #GPT call to generate character's response
-                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + j.name + ", the " + j.role + ". They say " + answer + ". Based on: " + story + " Respond with only the words that " + j.name + " says to the player.")
+                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + ". Based on this, the player talks to " + j.name + ", the " + j.role + ". They say " + answer + ". Respond with only the words that " + j.name + " says to the player.")
+                expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
                 story3 = story3.replace('"','')
-                #time.sleep(10)
-                #expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
-                #expression = expression.replace('"', '')
-                #action("SetExpression(\""+j.name+"\",\""+expression+"\")")
+                expression = expression.replace('"', '')
+                action("SetExpression(\""+j.name+"\",\""+expression+"\")")
                 action("SetDialog(\""+j.name+": "+story3+" [Close|Close]\")")
                 action("SetRight(\""+j.name+"\")")
                 action("ShowDialog()")
@@ -143,7 +145,7 @@ while(True):
             action("SetPosition("+char_names[0]+",GreatHall.LeftSupplicant)")
             action("FadeIn()")
             action("DisableInput()")
-            accuse = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". The player has accused " + j.name + ", the " + j.role + ", to the King, and that character is about to be put into jail. Respond with only the words that the king, " + king + ", says to the accused.")
+            accuse = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + j.name + ", the " + j.role + ", to the King, and that character is about to be put into jail. Respond with only the words that the king, " + king + ", says to the accused.")
             accuse = accuse.replace('"','')
             action("SetDialog(\""+accuse+" [Close|Close]\")")
             action("SetRight(\""+king+"\")")
@@ -160,7 +162,7 @@ while(True):
         action("SetLeft(\""+player+"\")")
         action('ShowDialog()')
 
-        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " This is the short description that you provided the player: " + story2 + ". Based on this, the player talks to " + king + ", the king. They say " + answer + ". Based on: " + story + " Respond with only the words that the king says to the player.")
+        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " Based on this, the player talks to " + king + ", the king. They say " + answer + " Respond with only the words that the king says to the player.")
         story3 = story3.replace('"','')
         action("SetDialog(\""+king+": "+story3+" [Close|Close]\")")
         action("SetRight(\""+king+"\")")
@@ -191,20 +193,8 @@ while(True):
         action('EnableIcon("Accuse '+char_names[11]+'", Mug,'+king+', Accuse '+char_names[11]+')') #barkeep
         action('EnableIcon("Accuse '+char_names[12]+'", Flask,'+king+', Accuse '+char_names[12]+')') #drunk
 
-#Generates NPCs when the player leaves the camp in order to save on loading time at the beginning.
     if(i == 'input arrived ' + player + ' position Camp.Exit'):
         moveTo("City")
-        if city_char == False:
-            for i in char_list[1:19]:
-                action("CreateCharacter({},{})".format(i.name,i.body))
-                action("SetEyeColor({},{})".format(i.name,i.eye_color))
-                action("SetHairColor({},{})".format(i.name,i.hair_color))
-                action("SetHairStyle({},{})".format(i.name,i.hairstyle))
-                action("SetSkinColor({},{})".format(i.name,i.skin_color))
-                action("SetClothing({},{})".format(i.name,i.outfit))
-                action("SetPosition({},{})".format(i.name,i.location))
-                action('EnableIcon("Talk to", Talk,'+i.name+', "Talk to '+i.name+'")')
-                city_char = True;
 
     if(i == 'input Key Inventory'):
         action("ShowList({})".format(player))
@@ -218,6 +208,17 @@ while(True):
         
     if(i == 'input Close Narration'):
         action("HideNarration()")
+        if city_char == False:
+            for i in char_list[1:19]:
+                action("CreateCharacter({},{})".format(i.name,i.body))
+                action("SetEyeColor({},{})".format(i.name,i.eye_color))
+                action("SetHairColor({},{})".format(i.name,i.hair_color))
+                action("SetHairStyle({},{})".format(i.name,i.hairstyle))
+                action("SetSkinColor({},{})".format(i.name,i.skin_color))
+                action("SetClothing({},{})".format(i.name,i.outfit))
+                action("SetPosition({},{})".format(i.name,i.location))
+                action('EnableIcon("Talk to", Talk,'+i.name+', "Talk to '+i.name+'")')
+                city_char = True;
 
     if(i == 'input Selected Close'):
         action("HideDialog()")
