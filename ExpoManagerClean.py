@@ -72,7 +72,7 @@ definite_locations = ['Camp','City','AlchemyShop','Blacksmith','GreatHall','Cour
 city_char = False
 for i in definite_locations[0:9]:
     action("CreatePlace({},{})".format(i,i))
-door_list = ["City.BlueHouseDoor","AlchemyShop.Door","City.RedHouseDoor","Tavern.Door","City.GreenHouseDoor","Library.Door", "City.BrownHouseDoor","Blacksmith.Door"]
+door_list = ["City.BlueHouseDoor","AlchemyShop.Door","City.RedHouseDoor","Tavern.Door","City.GreenHouseDoor","Library.Door", "City.BrownHouseDoor","Blacksmith.Door","Courtyard.Gate","GreatHall.Gate"]
 for d in door_list:
     door_icon(d)
 
