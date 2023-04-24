@@ -12,6 +12,7 @@ import openai
 import backoff
 import os
 import time
+
 #OpenAI API Key:
 os.environ["OPENAI_API_KEY"] = "sk-"
 
@@ -60,7 +61,7 @@ def gpt_call(prompt):
 
 #Enable icons open icon on doors
 def door_icon(door):
-    action('EnableIcon("Open Door", Exit,'+door+', "Open Door")')
+    action('EnableIcon("Open Door", Exit,'+door+', "Open Door", True)')
 
 #Moves the player to provided destination.
 def moveTo(destination):
@@ -95,7 +96,6 @@ for i in char_list[0:1]:
     action("SetHairStyle({},{})".format(i.name,i.hairstyle))
     action("SetSkinColor({},{})".format(i.name,i.skin_color))
     action("SetClothing({},{})".format(i.name,i.outfit))
-    
 
 #Loading mostly complete- show menu.
 print("start ShowMenu()",flush=True)
@@ -130,7 +130,7 @@ while(True):
                 action("SetLeft(\""+player+"\")")
                 action('ShowDialog()')
 
-              #GPT call to generate character's response
+                #GPT call to generate character's response
                 story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + ". Based on this, the player talks to " + j.name + ", the " + j.role + ". They say " + answer + ". Respond with only the words that " + j.name + " says to the player.")
                 expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
                 story3 = story3.replace('"','')
@@ -306,6 +306,7 @@ while(True):
 
     if(i == 'input Close Narration'):
         action("HideNarration()")
+        #Generates NPCs when the player closes the first narration in order to save on loading time at the beginning.
         if city_char == False:
             for i in char_list[1:]:
                 action("CreateCharacter({},{})".format(i.name,i.body))
@@ -332,9 +333,6 @@ while(True):
         action("SetRight(null)")
         action("SetLeft(null)")
         
-        
-      
-        
 #These if statements tie different parts of the map to different doors.
     if(i == 'input Open Door City.BlueHouseDoor'):
         moveTo("AlchemyShop.Door")
@@ -352,18 +350,17 @@ while(True):
         moveTo("Tavern.Door")
     if(i == 'input Open Door Tavern.Door'):
         moveTo("City.RedHouseDoor")
+    if(i == 'input Open Door Courtyard.Gate'):
+        moveTo("GreatHall.Gate")
+    if(i == 'input Open Door GreatHall.Gate'):
+        moveTo("Courtyard.Gate")
     if(i == 'input arrived ' + player + ' position City.EastEnd'):
         moveTo("Camp.Exit")
     if(i == 'input arrived ' + player + ' position City.WestEnd'):
         moveTo("Courtyard.Exit")
     if(i == 'input arrived ' + player + ' position Courtyard.Exit'):
         moveTo("City.WestEnd")
-    if(i == 'input arrived ' + player + ' position Courtyard.Gate'):
-        moveTo("GreatHall.Gate")
-    if(i == 'input arrived ' + player + ' position GreatHall.Gate'):
-        moveTo("Courtyard.Gate")
     if(i == 'input arrived ' + player + ' position City.NorthEnd'):
         moveTo("Ruins.Exit")
     if(i == 'input arrived ' + player + ' position Ruins.Exit'):
         moveTo("City.NorthEnd")
-
