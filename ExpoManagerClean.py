@@ -1,4 +1,4 @@
-#TODO: Notebook
+#TODO: Notebook works but possible format changes needed
 #TODO: Final Cutscene
 #TODO: Fix Expressions
 
@@ -12,12 +12,21 @@ import openai
 import backoff
 import os
 import time
-
 #OpenAI API Key:
 os.environ["OPENAI_API_KEY"] = "sk-"
 
 #Initialization
 conversations = []
+char1convo = []
+char2convo = []
+char5convo = []
+char6convo = []
+char7convo = []
+char8convo = []
+char9convo = []
+char10convo = []
+char11convo = []
+char12convo = []
 player = char_list[0].name
 king = char_list[3].name
 
@@ -51,7 +60,7 @@ def gpt_call(prompt):
 
 #Enable icons open icon on doors
 def door_icon(door):
-    action('EnableIcon("Open Door", Exit,'+door+', "Open Door", True)')
+    action('EnableIcon("Open Door", Exit,'+door+', "Open Door")')
 
 #Moves the player to provided destination.
 def moveTo(destination):
@@ -75,7 +84,9 @@ story2 = gpt_call(prompt2)
 #Generates our notebook, and a prop for the blacksmith
 action("CreateItem(Sword,Sword)")
 action("CreateItem(BlueBook,BlueBook)")
-
+for i in char_list[1:3] + char_list[5:]:
+    action("CreateItem({} Book,BlueBook)".format(i.name))
+    action("AddToList({} Book,""{} conversations"")".format(i.name,i.name))
 #Generates player details
 for i in char_list[0:1]:
     action("CreateCharacter({},{})".format(i.name,i.body))
@@ -84,7 +95,7 @@ for i in char_list[0:1]:
     action("SetHairStyle({},{})".format(i.name,i.hairstyle))
     action("SetSkinColor({},{})".format(i.name,i.skin_color))
     action("SetClothing({},{})".format(i.name,i.outfit))
-    action("AddToList(BlueBook,""BlueBook"")")
+    
 
 #Loading mostly complete- show menu.
 print("start ShowMenu()",flush=True)
@@ -95,8 +106,8 @@ while(True):
     if(i == 'input Selected Start'):
         for i in char_list[0:1]:
             action("SetPosition({},{})".format(i.name,i.location))
-        action('EnableIcon("Review Conversations", Research,BlueBook, "Review Conversation",true)')
-        action("SetPosition(Sword,Blacksmith.Anvil)")
+        for i in char_list[1:3]+ char_list[5:]:
+            action('EnableIcon("Review Conversations", Research,{} Book, "Review Conversation",true)'.format(i.name))
         action('SetCameraFocus('+player+')')
         action("EnableInput()")
         action('HideMenu()')
@@ -119,7 +130,7 @@ while(True):
                 action("SetLeft(\""+player+"\")")
                 action('ShowDialog()')
 
-                #GPT call to generate character's response
+              #GPT call to generate character's response
                 story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + ". Based on this, the player talks to " + j.name + ", the " + j.role + ". They say " + answer + ". Respond with only the words that " + j.name + " says to the player.")
                 expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
                 story3 = story3.replace('"','')
@@ -131,6 +142,45 @@ while(True):
 
                 conversations.append(player + ": " + answer)
                 conversations.append(j.name + ": " + story3)
+                if j.name == char_names[1]:
+                    char1convo.append(player + ": " + answer)
+                    char1convo.append(j.name + ": " + story3)
+                if j.name == char_names[2]:
+                    char2convo.append(player + ": " + answer)
+                    char2convo.append(j.name + ": " + story3)
+                    
+                if j.name == char_names[5]:
+                    char5convo.append(player + ": " + answer)
+                    char5convo.append(j.name + ": " + story3)
+                  
+                if j.name == char_names[6]:
+                    char6convo.append(player + ": " + answer)
+                    char6convo.append(j.name + ": " + story3)
+                    
+                if j.name == char_names[7]:
+                    char7convo.append(player + ": " + answer)
+                    char7convo.append(j.name + ": " + story3)
+                    
+                if j.name == char_names[8]:
+                    char8convo.append(player + ": " + answer)
+                    char8convo.append(j.name + ": " + story3)
+                   
+                if j.name == char_names[9]:
+                   char9convo.append(player + ": " + answer)
+                   char9convo.append(j.name + ": " + story3)
+                    
+                if j.name == char_names[10]:
+                   char10convo.append(player + ": " + answer)
+                   char10convo.append(j.name + ": " + story3)
+                    
+                if j.name == char_names[11]:
+                    char11convo.append(player + ": " + answer)
+                    char11convo.append(j.name + ": " + story3)
+                    
+                if j.name == char_names[12]:
+                   char12convo.append(player + ": " + answer)
+                   char12convo.append(j.name + ": " + story3)
+              
             else:
                 #Can choose to start accusation process or speak to him like other NPCs.
                 action("SetDialog(\"" + king + ": Are you here to make an accusation? [Yes|Yes my lord.] [No|No my lord.]"+"\")")
@@ -201,15 +251,63 @@ while(True):
 
     if(i == 'input Close List'):
         action("HideList()")
+        action("EnableInput")
 
-    if(i == 'input Review Conversations BlueBook'):
-        action("SetNarration(\""+' '.join(conversations)+"\")")
-        action("ShowNarration()")
-        
+    if(i == 'input Review Conversations '+ char_names[1]+" Book"):
+      action("SetDialog(\""+' '.join(char1convo)+"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[1]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[2]+" Book"):
+      action("SetDialog(\""+' '.join(char2convo)+"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[2]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[5]+" Book"):
+      action("SetDialog(\""+' '.join(char5convo)+"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[5]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[6]+" Book"):
+      action("SetDialog(\""+' '.join(char6convo)+"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[6]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[7]+" Book"):
+      action("SetDialog(\""+' '.join(char7convo)+"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[7]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[8]+" Book"):
+      action("SetDialog(\""+' '.join(char8convo)+"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[8]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[9]+" Book"):
+      action("SetDialog(\""+' '.join(char9convo)+"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[9]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[10]+" Book"):
+      action("SetDialog(\""+' '.join(char10convo)+"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[10]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[11]+" Book"):
+      action("SetDialog(\""+' '.join(char11convo)+"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[11]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[12]+" Book"):
+      action("SetDialog(\""+' '.join(char12convo)+"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[12]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+
     if(i == 'input Close Narration'):
         action("HideNarration()")
         if city_char == False:
-            for i in char_list[1:19]:
+            for i in char_list[1:]:
                 action("CreateCharacter({},{})".format(i.name,i.body))
                 action("SetEyeColor({},{})".format(i.name,i.eye_color))
                 action("SetHairColor({},{})".format(i.name,i.hair_color))
@@ -227,6 +325,15 @@ while(True):
         action("SetLeft(null)")
         action("EnableInput()")
         action("EnableInput()")
+    
+    if(i == 'input Selected Close Conversation'):
+        action("HideDialog()")
+        action("ClearDialog()")
+        action("SetRight(null)")
+        action("SetLeft(null)")
+        
+        
+      
         
 #These if statements tie different parts of the map to different doors.
     if(i == 'input Open Door City.BlueHouseDoor'):
@@ -245,17 +352,18 @@ while(True):
         moveTo("Tavern.Door")
     if(i == 'input Open Door Tavern.Door'):
         moveTo("City.RedHouseDoor")
-    if(i == 'input Open Door Courtyard.Gate'):
-        moveTo("GreatHall.Gate")
-    if(i == 'input Open Door GreatHall.Gate'):
-        moveTo("Courtyard.Gate")
     if(i == 'input arrived ' + player + ' position City.EastEnd'):
         moveTo("Camp.Exit")
     if(i == 'input arrived ' + player + ' position City.WestEnd'):
         moveTo("Courtyard.Exit")
     if(i == 'input arrived ' + player + ' position Courtyard.Exit'):
         moveTo("City.WestEnd")
+    if(i == 'input arrived ' + player + ' position Courtyard.Gate'):
+        moveTo("GreatHall.Gate")
+    if(i == 'input arrived ' + player + ' position GreatHall.Gate'):
+        moveTo("Courtyard.Gate")
     if(i == 'input arrived ' + player + ' position City.NorthEnd'):
         moveTo("Ruins.Exit")
     if(i == 'input arrived ' + player + ' position Ruins.Exit'):
         moveTo("City.NorthEnd")
+
