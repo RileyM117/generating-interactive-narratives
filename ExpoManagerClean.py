@@ -51,7 +51,7 @@ def gpt_call(prompt):
 
 #Enable icons open icon on doors
 def door_icon(door):
-    action('EnableIcon("Open Door", Exit,'+door+', "Open Door")')
+    action('EnableIcon("Open Door", Exit,'+door+', "Open Door", True)')
 
 #Moves the player to provided destination.
 def moveTo(destination):
@@ -245,16 +245,16 @@ while(True):
         moveTo("Tavern.Door")
     if(i == 'input Open Door Tavern.Door'):
         moveTo("City.RedHouseDoor")
+    if(i == 'input Open Door Courtyard.Gate'):
+        moveTo("GreatHall.Gate")
+    if(i == 'input Open Door GreatHall.Gate'):
+        moveTo("Courtyard.Gate")
     if(i == 'input arrived ' + player + ' position City.EastEnd'):
         moveTo("Camp.Exit")
     if(i == 'input arrived ' + player + ' position City.WestEnd'):
         moveTo("Courtyard.Exit")
     if(i == 'input arrived ' + player + ' position Courtyard.Exit'):
         moveTo("City.WestEnd")
-    if(i == 'input arrived ' + player + ' position Courtyard.Gate'):
-        moveTo("GreatHall.Gate")
-    if(i == 'input arrived ' + player + ' position GreatHall.Gate'):
-        moveTo("Courtyard.Gate")
     if(i == 'input arrived ' + player + ' position City.NorthEnd'):
         moveTo("Ruins.Exit")
     if(i == 'input arrived ' + player + ' position Ruins.Exit'):
