@@ -1,6 +1,5 @@
 #TODO: Notebook works but possible format changes needed
 #TODO: Final Cutscene
-#TODO: Fix Expressions
 
 #Imports:
 import tkinter as tk
@@ -202,12 +201,6 @@ while(True):
 
         if(i == 'input Selected Close'):
             action("SetExpression(\""+j.name+"\",neutral)")
-            action("HideDialog()")
-            action("ClearDialog()")
-            action("SetRight(null)")
-            action("SetLeft(null)")
-            action("EnableInput()")
-            action("EnableInput()")
 
 #If you say no when the king asks you if you are here to make an accusation, you can talk to him like a normal character.
     if i == "input Selected No":
@@ -332,6 +325,14 @@ while(True):
         action("ClearDialog()")
         action("SetRight(null)")
         action("SetLeft(null)")
+    
+    if(i == 'input Selected Close'):
+            action("HideDialog()")
+            action("ClearDialog()")
+            action("SetRight(null)")
+            action("SetLeft(null)")
+            action("EnableInput()")
+            action("EnableInput()")
         
 #These if statements tie different parts of the map to different doors.
     if(i == 'input Open Door City.BlueHouseDoor'):
