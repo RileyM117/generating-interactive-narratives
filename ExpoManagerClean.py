@@ -252,6 +252,7 @@ while(True):
     if i == "input Selected Yes":
         action("SetDialog(\""+player+": Yes my lord."+"\")")
         action('SetDialog("Alright. Right click me again to choose the murderer. [Understood|Understood]"')
+
     if i == "input Selected Understood":
         action('HideDialog()')
         action('EnableInput()')
