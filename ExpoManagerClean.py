@@ -188,15 +188,21 @@ while(True):
         
     #After you accuse someone:
         if(i == "input Accuse " + j.name + " " + king):
+            accused = j
             action("FadeOut()")
+            action("HideDialog()")
+            action("ClearDialog()")
+            action("SetRight(null)")
+            action("SetLeft(null)")
+            action("DisableInput()")
             action("SetPosition("+j.name+",GreatHall.Supplicant)")
             action("SetPosition("+char_names[0]+",GreatHall.LeftSupplicant)")
+            action("Face("+player+",GreatHall.RightThrone)")
             action("FadeIn()")
-            action("DisableInput()")
-            accuse = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + j.name + ", the " + j.role + ", to the King, and that character is about to be put into jail. Respond with only the words that the king, " + king + ", says to the accused.")
+            accuse = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + ", the " + accused.role + ", to the King, and that character is about to be put into jail. Respond with only the words that the king, " + king + ", says to the accused. The King believes the player no matter what and will put "+accused.name+" in jail even if they are innocent.")
             accuse = accuse.replace('"','')
-            action("SetDialog(\""+accuse+" [Close|Close]\")")
-            action("SetRight(\""+king+"\")")
+            action("SetDialog(\""+king+": "+accuse+" [Next|Next]\")")
+            action("SetLeft(\""+king+"\")")
             action("ShowDialog()")
 
         if(i == 'input Selected Close'):
@@ -327,12 +333,61 @@ while(True):
         action("SetLeft(null)")
     
     if(i == 'input Selected Close'):
-            action("HideDialog()")
-            action("ClearDialog()")
-            action("SetRight(null)")
-            action("SetLeft(null)")
-            action("EnableInput()")
-            action("EnableInput()")
+        action("HideDialog()")
+        action("ClearDialog()")
+        action("SetRight(null)")
+        action("SetLeft(null)")
+        action("EnableInput()")
+        action("EnableInput()")
+
+    if(i == 'input Selected Next'):
+        accused_response = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + ", the " + accused.role + ", to the King, and that character is about to be put into jail. Respond with only the words that the accused character says before they are sent to jail.")
+        accused_response = accused_response.replace('"','')
+        action("SetDialog(\""+accused.name+": "+accused_response+" [To Jail|To Jail!]\")")
+        action("SetRight("+accused.name+")")
+        action("ShowDialog()")
+
+    if(i == 'input Selected To Jail'):
+        action("HideDialog()")
+        action("ClearDialog()")
+        action("SetRight(null)")
+        action("SetLeft(null)")
+        action("FadeOut()")
+        action("CreatePlace(Dungeon,Dungeon")
+        moveTo("Dungeon.CellDoor")
+        action("SetPosition("+accused.name+",Dungeon.RoundTable)")
+        action("Face("+player+","+accused.name+")")
+        action("Face("+accused.name+","+player+")")
+        correct = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + " of the crime. Answer /""Yes/"" or /""No/"" only- was the player correct?")
+        if("Yes" in correct):
+            win = True
+            action("FadeIn()")
+            confession = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has correctly accused " + accused.name + ", the " + accused.role + " of the crime. "+accused.name +" is now in jail. Respond with the words of this characters confession to the crime.")
+            confession = confession.replace('"','')
+            action("SetDialog(\""+accused.name+": "+confession+" [Finish|Finish]\")")
+            action("ShowDialog()")
+        if("No" in correct):
+            win = False
+            action("FadeIn()")
+            plea = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has incorrectly accused " + accused.name + ", the " + accused.role + " of the crime. "+accused.name +" is now in jail. Respond with only the words of what this character has to say to the player for throwing them in jail.")
+            plea = plea.replace('"','')
+            action("SetDialog(\""+accused.name+": "+plea+" [Finish|Finish]\")")
+            action("ShowDialog()")
+            
+    if(i == 'input Selected Finish'):
+        action("HideDialog()")
+        action("ClearDialog()")
+        action("SetRight(null)")
+        action("SetLeft(null)")
+        action("FadeOut()")
+        story = story.replace('"','')
+        if win == True:
+            action("SetDialog(\"Congratulations! You correctly identified the murderer. After more investigation, you are able to uncover the full story: " + story+"\")")
+            action("ShowDialog()")
+        if win == False:
+            action("SetDialog(\"You were unable to identify the correct murderer. Feeling that something was wrong, the king brought in another investigator who revealed the truth: " +story + "You are placed in jail for your gross incompetence. Better luck next time!\")")
+            action("ShowDialog()")
+        
         
 #These if statements tie different parts of the map to different doors.
     if(i == 'input Open Door City.BlueHouseDoor'):
