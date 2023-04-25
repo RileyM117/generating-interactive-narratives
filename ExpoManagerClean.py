@@ -13,7 +13,7 @@ import os
 import time
 
 #OpenAI API Key:
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "sk-"
 
 #Initialization
 conversations = []
@@ -44,7 +44,7 @@ def action(command):
             return False
 
 #Code that is used to make a call to the GPT API and get a response based on the prompt variable. Takes in prompt and returns GPT response.
-@backoff.on_exception(backoff.constant, openai.error.RateLimitError, jitter=None, interval=0.01) #prevents crashes from rate limiting by automatically retrying
+@backoff.on_exception(backoff.expo, openai.error.RateLimitError, jitter=backoff.full_jitter) #prevents crashes from rate limiting by automatically retrying
 def gpt_call(prompt):
     openai.api_key = os.getenv("OPENAI_API_KEY")
     completion = openai.ChatCompletion.create(
@@ -106,7 +106,6 @@ for i in char_list[1:3]+ char_list[5:13]:
 #Loading mostly complete- show menu.
 print("start ShowMenu()",flush=True)
 
-    
 #Things that need to happen after start button is pressed:
 while(True):
     i = input()
@@ -120,7 +119,6 @@ while(True):
     #Need to load this input statement first as this is the first location the player reaches
     if(i == 'input arrived ' + player + ' position Camp.Exit'):
         moveTo("City")
-
 
     #Dialogue code.
     for j in char_list:
@@ -138,7 +136,7 @@ while(True):
                 action('ShowDialog()')
 
                 #GPT call to generate character's response
-                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + ". Based on this, the player talks to " + j.name + ", and says: " + answer + ". What might " + j.name + " say back? Respond with only the words that " + j.name + " says to the player.")
+                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + ". Based on this, " + player + " talks to " + j.name + ", and says: " + answer + ". What might " + j.name + " say back? Respond with only the words that " + j.name + " says to " + player + ".")
                 expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
                 story3 = story3.replace('"','')
                 expression = expression.replace('"', '')
@@ -208,11 +206,8 @@ while(True):
             action("SetPosition("+char_names[0]+",GreatHall.LeftSupplicant)")
             action("Face("+player+",GreatHall.RightThrone)")
             action("FadeIn()")
-            accuse = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + ", the " + accused.role + ", to the King, and that character is about to be put into jail. Respond with only the words that "+ king + ", the king, says to the accused. The King believes the player no matter what and will put "+accused.name+" in jail even if they are innocent.")
+            accuse = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " " + player + " has accused " + accused.name + ", the " + accused.role + ", to the King, and that character is about to be put into jail. Respond with only the words that "+ king + ", the king, says to the accused. The King believes " + player + " no matter what and will put "+accused.name+" in jail even if they are innocent.")
             accuse = accuse.replace('"','')
-            expression = gpt_call("This is a line of dialogue: " + accuse + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
-            expression = expression.replace('"', '')
-            action("SetExpression(\""+king+"\",\""+expression+"\")")
             action("SetDialog(\""+king+": "+accuse+" [Next|Next]\")")
             action("SetLeft(\""+king+"\")")
             action("ShowDialog()")
@@ -231,7 +226,7 @@ while(True):
         action("SetLeft(\""+player+"\")")
         action('ShowDialog()')
 
-        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " Based on this, the player talks to " + king + ", the king. They say " + answer + " Respond with only the words that the king says to the player.")
+        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " Based on this, " + player + " talks to " + king + ", the king. They say " + answer + " Respond with only the words that the king says to " + player + ".")
         story3 = story3.replace('"','')
         action("SetDialog(\""+king+": "+story3+" [Close|Close]\")")
         action("SetRight(\""+king+"\")")
@@ -244,6 +239,7 @@ while(True):
     if i == "input Selected Yes":
         action("SetDialog(\""+player+": Yes my lord."+"\")")
         action('SetDialog("Alright. Right click me again to choose the murderer. [Understood|Understood]"')
+
     if i == "input Selected Understood":
         action('HideDialog()')
         action('EnableInput()')
@@ -260,7 +256,6 @@ while(True):
         action('EnableIcon("Accuse '+char_names[10]+'", Scroll,'+king+', Accuse '+char_names[10]+')') #student
         action('EnableIcon("Accuse '+char_names[11]+'", Mug,'+king+', Accuse '+char_names[11]+')') #barkeep
         action('EnableIcon("Accuse '+char_names[12]+'", Flask,'+king+', Accuse '+char_names[12]+')') #drunk
-
 
     #Open Inventory:
     if(i == 'input Key Inventory'):
@@ -356,13 +351,11 @@ while(True):
 
     #First, the accused talks to the king
     if(i == 'input Selected Next'):
-        accused_response = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + ", the " + accused.role + ", to the King, and that character is about to be put into jail. Respond with only the words that the accused character says before they are sent to jail.")
-        accused_response = accused_response.replace('"','')
-        expression = gpt_call("This is a line of dialogue: " + accused_response + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
-        expression = expression.replace('"', '')
-        action("SetExpression(\""+accused.name+"\",\""+expression+"\")")
-        action("SetDialog(\""+accused.name+": "+accused_response+" [To Jail|To Jail!]\")")
         action("SetRight("+accused.name+")")
+        accused_response = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " " + player + " has accused " + accused.name + ", the " + accused.role + ", to the King, and that character is about to be put into jail. Respond with only the words that the accused character says before they are sent to jail. They should be surprised.")
+        accused_response = accused_response.replace('"','')
+        action("SetExpression(\""+accused.name+"\",\"surprised\")")
+        action("SetDialog(\""+accused.name+": "+accused_response+" [To Jail|To Jail!]\")")
         action("ShowDialog()")
 
     #Then, the accused and the player go to the jail
@@ -370,32 +363,28 @@ while(True):
         action("HideDialog()")
         action("ClearDialog()")
         action("SetExpression(\""+accused.name+"\",neutral)")
-        action("SetRight(null)")
-        action("SetLeft(null)")
+        action("SetRight("+accused.name+")")
+        action("SetLeft("+player+")")
         action("FadeOut()")
         action("CreatePlace(Dungeon,Dungeon")
         moveTo("Dungeon.CellDoor")
         action("SetPosition("+accused.name+",Dungeon.RoundTable)")
         action("Face("+player+","+accused.name+")")
         action("Face("+accused.name+","+player+")")
-        correct = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + " of the crime. Answer /""Yes/"" or /""No/"" only- was the player correct?")
+        correct = gpt_call("This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + " of the crime. Answer /""Yes/"" or /""No/"" only- was the player correct?")
         if("Yes" in correct):
             win = True
-            confession = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has correctly accused " + accused.name + ", the " + accused.role + " of the crime. "+accused.name +" is now in jail. Respond with the words of this characters confession to the crime.")
+            confession = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " " + player + " has correctly accused " + accused.name + ", the " + accused.role + " of the crime. "+accused.name +" is now in jail. Respond with the words of this characters confession to the crime. They should be angry.")
             confession = confession.replace('"','')
-            expression = gpt_call("This is a line of dialogue: " + confession + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
-            expression = expression.replace('"', '')
-            action("SetExpression(\""+accused.name+"\",\""+expression+"\")")
+            action("SetExpression(\""+accused.name+"\",\"angry\")")
             action("FadeIn()")
             action("SetDialog(\""+accused.name+": "+confession+" [Finish|Finish]\")")
             action("ShowDialog()")
         if("No" in correct):
             win = False
-            plea = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has incorrectly accused " + accused.name + ", the " + accused.role + " of the crime. "+accused.name +" is now in jail. Respond with only the words of what this character has to say to the player for throwing them in jail.")
+            plea = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " " + player + " has incorrectly accused " + accused.name + ", the " + accused.role + " of the crime. "+accused.name +" is now in jail. Respond with only the words of what this character has to say to " + player + " for throwing them in jail. They should be angry.")
             plea = plea.replace('"','')
-            expression = gpt_call("This is a line of dialogue: " + plea + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
-            expression = expression.replace('"', '')
-            action("SetExpression(\""+accused.name+"\",\""+expression+"\")")
+            action("SetExpression(\""+accused.name+"\",\"angry\")")
             action("FadeIn()")
             action("SetDialog(\""+accused.name+": "+plea+" [Finish|Finish]\")")
             action("ShowDialog()")
@@ -407,15 +396,14 @@ while(True):
         action("SetRight(null)")
         action("SetLeft(null)")
         action("FadeOut()")
-        story = story.replace('"','')
         if win == True:
             action("SetDialog(\"Congratulations! You correctly identified the murderer. After more investigation, you are able to uncover the full story: " + story+"\")")
             action("ShowDialog()")
         if win == False:
-            action("SetDialog(\"You were unable to identify the correct murderer. In a dream, the ghost of "+victim+" presents you with the truth: " +story + "Despite knowing what happened, it is too late. The King no longer trusts you, and you are placed in jail for your gross incompetence. Better luck next time!\")")
+            action("SetDialog(\"You were unable to identify the correct murderer. In a dream, the ghost of "+victim+" presents you with the truth: " +story + " Despite knowing what happened, it is too late. The King no longer trusts you, and you are placed in jail for your gross incompetence. Better luck next time!\")")
             action("ShowDialog()")
         
-#These if statements tie different parts of the map to different doors.
+    #These if statements tie different parts of the map to different doors.
     if(i == 'input Open Door City.BlueHouseDoor'):
         moveTo("AlchemyShop.Door")
     if(i == 'input Open Door AlchemyShop.Door'):
