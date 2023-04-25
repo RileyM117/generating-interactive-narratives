@@ -63,10 +63,18 @@ char_list = [main_char,blacksmith,alchemist,king,queen,city_rando,noble,merchant
 char_names = [main_char.name,blacksmith.name,alchemist.name,king.name,queen.name,city_rando.name,noble.name,merchant.name,witch.name,
              librarian.name,student.name,barkeep.name,drunk.name,victim.name]
 gpt_char_list = []
+char_locs = []
 
 for i in range(len(char_list)):
   char = (char_names[i], char_list[i].role)
   gpt_char_list.append(', the '.join(char))
+
+locs = ["NA", "blacksmith's shop", "alchemist's shop", 'great hall', 'great hall', 'city', 'courtyard', 'courtyard', 'ruins', 'library', 'library', 'tavern', 'tavern', "NA"]
+for i in range(len(char_list)):
+  char = (char_names[i], locs[i])
+  char_locs.append(' is in the '.join(char))
+
+char_locs = char_locs[1:13]
 
 for i in char_list:
   i.get_char()

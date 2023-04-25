@@ -2,11 +2,11 @@ import tkinter as tk
 from tkinter import simpledialog
 from ExpoCharacters import char_list
 from ExpoCharacters import char_names
+from ExpoCharacters import char_locs
 from ExpoCharacters import gpt_char_list
 import openai
 import backoff
 import os
-import time
 
 #OpenAI API Key:
 os.environ["OPENAI_API_KEY"] = "sk-"
@@ -42,7 +42,7 @@ def action(command):
             return False
 
 #Code that is used to make a call to the GPT API and get a response based on the prompt variable. Takes in prompt and returns GPT response.
-@backoff.on_exception(backoff.constant, openai.error.RateLimitError, jitter=None, interval=0.01) #prevents crashes from rate limiting by automatically retrying
+@backoff.on_exception(backoff.expo, openai.error.RateLimitError, jitter=backoff.full_jitter) #prevents crashes from rate limiting by automatically retrying
 def gpt_call(prompt):
     openai.api_key = os.getenv("OPENAI_API_KEY")
     completion = openai.ChatCompletion.create(
@@ -56,6 +56,12 @@ def gpt_call(prompt):
     comp = comp.replace('\r', '')
     comp = comp.strip()
     return(comp)
+
+#Populates notebooks with conversation history
+def rev_conv(conv):
+    for i in conv:
+        action("SetDialog(\""+i+"\")")
+    return
 
 #Enable icons open icon on doors
 def door_icon(door):
@@ -83,9 +89,7 @@ story2 = gpt_call(prompt2)
 #Generates our notebook, and a prop for the blacksmith
 action("CreateItem(Sword,Sword)")
 action("CreateItem(BlueBook,BlueBook)")
-for i in char_list[1:13]:
-    action("CreateItem({} Book,BlueBook)".format(i.name))
-    action("AddToList({} Book,""Conversations with {} the {}"")".format(i.name,i.name,i.role))
+
 #Generates player details
 for i in char_list[0:1]:
     action("CreateCharacter({},{})".format(i.name,i.body))
@@ -94,24 +98,24 @@ for i in char_list[0:1]:
     action("SetHairStyle({},{})".format(i.name,i.hairstyle))
     action("SetSkinColor({},{})".format(i.name,i.skin_color))
     action("SetClothing({},{})".format(i.name,i.outfit))
-
-for i in char_list[0:1]:
     action("SetPosition({},{})".format(i.name,i.location))
+
 for i in char_list[1:13]:
+    action("CreateItem({} Book,BlueBook)".format(i.name))
+    action("AddToList({} Book,""Conversations with {} the {}"")".format(i.name,i.name,i.role))
     action('EnableIcon("Review Conversations", Research,{} Book, "Review Conversation",true)'.format(i.name))
 for i in char_list[1:]:
-                action("CreateCharacter({},{})".format(i.name,i.body))
-                action("SetEyeColor({},{})".format(i.name,i.eye_color))
-                action("SetHairColor({},{})".format(i.name,i.hair_color))
-                action("SetHairStyle({},{})".format(i.name,i.hairstyle))
-                action("SetSkinColor({},{})".format(i.name,i.skin_color))
-                action("SetClothing({},{})".format(i.name,i.outfit))
-                action("SetPosition({},{})".format(i.name,i.location))
-                action('EnableIcon("Talk to", Talk,'+i.name+', "Talk to '+i.name+'")')
+    action("CreateCharacter({},{})".format(i.name,i.body))
+    action("SetEyeColor({},{})".format(i.name,i.eye_color))
+    action("SetHairColor({},{})".format(i.name,i.hair_color))
+    action("SetHairStyle({},{})".format(i.name,i.hairstyle))
+    action("SetSkinColor({},{})".format(i.name,i.skin_color))
+    action("SetClothing({},{})".format(i.name,i.outfit))
+    action("SetPosition({},{})".format(i.name,i.location))
+    action('EnableIcon("Talk to", Talk,'+i.name+', "Talk to '+i.name+'", True)')
 
 #Loading mostly complete- show menu.
 print("start ShowMenu()",flush=True)
-
     
 #Things that need to happen after start button is pressed:
 while(True):
@@ -127,7 +131,6 @@ while(True):
     if(i == 'input arrived ' + player + ' position Camp.Exit'):
         moveTo("City")
 
-
     #Dialogue code.
     for j in char_list:
         if(i == 'input Talk to ' + j.name): #For all characters but the king:
@@ -142,11 +145,9 @@ while(True):
                 action("SetDialog(\""+player+": " + answer+"\")")
                 action("SetLeft(\""+player+"\")")
                 action('ShowDialog()')
-                
-                char_locs = 'The characters,' + ', '.join(char_names)  +'are in the blacksmiths shop, alchemists shop, Great Hall, GreatHall, City, Courtyard, Courtyard, Ruins, Library, Library, Tavern, and the Tavern respectively.' 
 
                 #GPT call to generate character's response
-                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + char_locs + ". Based on this, the player talks to " + j.name + ", and says: " + answer + ". What might " + j.name + " say back? Respond with only the words that " + j.name + " says to the player.")
+                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + ". " + ', '.join(char_locs) + ". Based on this, " + player + " talks to " + j.name + ", and says: " + answer + ". What might " + j.name + " say back? Respond with only the words that " + j.name + " says to " + player + ".")
                 expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
                 story3 = story3.replace('"','')
                 expression = expression.replace('"', '')
@@ -157,6 +158,7 @@ while(True):
 
                 conversations.append(player + ": " + answer)
                 conversations.append(j.name + ": " + story3)
+
                 if j.name == char_names[1]:
                     char1convo.append(player + ": " + answer)
                     char1convo.append(j.name + ": " + story3)
@@ -165,40 +167,31 @@ while(True):
                     char2convo.append(j.name + ": " + story3)
                 if j.name == char_names[3]:
                     char3convo.append(player + ": " + answer)
-                    char3convo.append(j.name + ": " + story3)
-                    
+                    char3convo.append(j.name + ": " + story3)                   
                 if j.name == char_names[4]:
                     char4convo.append(player + ": " + answer)
                     char4convo.append(j.name + ": " + story3)
-                    
                 if j.name == char_names[5]:
                     char5convo.append(player + ": " + answer)
                     char5convo.append(j.name + ": " + story3)
-                  
                 if j.name == char_names[6]:
                     char6convo.append(player + ": " + answer)
                     char6convo.append(j.name + ": " + story3)
-                    
                 if j.name == char_names[7]:
                     char7convo.append(player + ": " + answer)
                     char7convo.append(j.name + ": " + story3)
-                    
                 if j.name == char_names[8]:
                     char8convo.append(player + ": " + answer)
                     char8convo.append(j.name + ": " + story3)
-                   
                 if j.name == char_names[9]:
                    char9convo.append(player + ": " + answer)
                    char9convo.append(j.name + ": " + story3)
-                    
                 if j.name == char_names[10]:
                    char10convo.append(player + ": " + answer)
                    char10convo.append(j.name + ": " + story3)
-                    
                 if j.name == char_names[11]:
                     char11convo.append(player + ": " + answer)
                     char11convo.append(j.name + ": " + story3)
-                    
                 if j.name == char_names[12]:
                    char12convo.append(player + ": " + answer)
                    char12convo.append(j.name + ": " + story3)
@@ -223,11 +216,8 @@ while(True):
             action("SetPosition("+char_names[0]+",GreatHall.LeftSupplicant)")
             action("Face("+player+",GreatHall.RightThrone)")
             action("FadeIn()")
-            accuse = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + ", the " + accused.role + ", to the King, and that character is about to be put into jail. Respond with only the words that "+ king + ", the king, says to the accused. The King believes the player no matter what and will put "+accused.name+" in jail even if they are innocent.")
+            accuse = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " " + player + " has accused " + accused.name + ", the " + accused.role + ", to the King, and that character is about to be put into jail. Respond with only the words that "+ king + ", the king, says to the accused. The King believes " + player + " no matter what and will put "+accused.name+" in jail even if they are innocent.")
             accuse = accuse.replace('"','')
-            expression = gpt_call("This is a line of dialogue: " + accuse + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
-            expression = expression.replace('"', '')
-            action("SetExpression(\""+king+"\",\""+expression+"\")")
             action("SetDialog(\""+king+": "+accuse+" [Next|Next]\")")
             action("SetLeft(\""+king+"\")")
             action("ShowDialog()")
@@ -246,7 +236,7 @@ while(True):
         action("SetLeft(\""+player+"\")")
         action('ShowDialog()')
 
-        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " Based on this, the player talks to " + king + ", the king. They say " + answer + " Respond with only the words that the king says to the player.")
+        story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " Based on this, " + player + " talks to " + king + ", the king. They say " + answer + " Respond with only the words that the king says to " + player + ".")
         story3 = story3.replace('"','')
         action("SetDialog(\""+king+": "+story3+" [Close|Close]\")")
         action("SetRight(\""+king+"\")")
@@ -258,7 +248,6 @@ while(True):
         char3convo.append(player + ": " + answer)
         char3convo.append(king + ": " + story3)
         
-
     #Beginning of accusation process (what happens when you tell the king you are ready to accuse).
     if i == "input Selected Yes":
         action("SetDialog(\""+player+": Yes my lord."+"\")")
@@ -280,118 +269,15 @@ while(True):
         action('EnableIcon("Accuse '+char_names[11]+'", Mug,'+king+', Accuse '+char_names[11]+')') #barkeep
         action('EnableIcon("Accuse '+char_names[12]+'", Flask,'+king+', Accuse '+char_names[12]+')') #drunk
 
-
-    #Open Inventory:
-    if(i == 'input Key Inventory'):
-        action("ShowList({})".format(player))
-
-    #Close Inventory:
-    if(i == 'input Close List'):
-        action("HideList()")
-        action("EnableInput")
-
-    if(i == 'input Review Conversations '+ char_names[1]+" Book"):
-      action("SetDialog(\""+' '.join(char1convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[1]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")
-    if(i == 'input Review Conversations '+ char_names[2]+" Book"):
-      action("SetDialog(\""+' '.join(char2convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[2]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")
-    if(i == 'input Review Conversations '+ char_names[3]+" Book"):
-      action("SetDialog(\""+' '.join(char3convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[3]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")  
-    if(i == 'input Review Conversations '+ char_names[4]+" Book"):
-      action("SetDialog(\""+' '.join(char4convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[4]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")
-    if(i == 'input Review Conversations '+ char_names[5]+" Book"):
-      action("SetDialog(\""+' '.join(char5convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[5]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")
-    if(i == 'input Review Conversations '+ char_names[6]+" Book"):
-      action("SetDialog(\""+' '.join(char6convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[6]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")
-    if(i == 'input Review Conversations '+ char_names[7]+" Book"):
-      action("SetDialog(\""+' '.join(char7convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[7]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")
-    if(i == 'input Review Conversations '+ char_names[8]+" Book"):
-      action("SetDialog(\""+' '.join(char8convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[8]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")
-    if(i == 'input Review Conversations '+ char_names[9]+" Book"):
-      action("SetDialog(\""+' '.join(char9convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[9]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")
-    if(i == 'input Review Conversations '+ char_names[10]+" Book"):
-      action("SetDialog(\""+' '.join(char10convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[10]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")
-    if(i == 'input Review Conversations '+ char_names[11]+" Book"):
-      action("SetDialog(\""+' '.join(char11convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[11]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")
-    if(i == 'input Review Conversations '+ char_names[12]+" Book"):
-      action("SetDialog(\""+' '.join(char12convo)+" [Close Conversation|Close Conversation]\")")
-      action("SetRight(\""+char_names[12]+"\")")
-      action("SetLeft(\""+player+"\")")
-      action("ShowDialog()")
-
-    #Closing initial narration and initializing other characters
-    if(i == 'input Close Narration'):
-        action("HideNarration()")
-        #if city_char == False:
-        #    for i in char_list[1:]:
-        #        action("CreateCharacter({},{})".format(i.name,i.body))
-        #        action("SetEyeColor({},{})".format(i.name,i.eye_color))
-        #        action("SetHairColor({},{})".format(i.name,i.hair_color))
-        #        action("SetHairStyle({},{})".format(i.name,i.hairstyle))
-        #        action("SetSkinColor({},{})".format(i.name,i.skin_color))
-        #        action("SetClothing({},{})".format(i.name,i.outfit))
-        #        action("SetPosition({},{})".format(i.name,i.location))
-        #        action('EnableIcon("Talk to", Talk,'+i.name+', "Talk to '+i.name+'")')
-        #        city_char = True;
-    
-    if(i == 'input Selected Close Conversation'):
-        action("HideDialog()")
-        action("ClearDialog()")
-        action("SetRight(null)")
-        action("SetLeft(null)")
-    
-    #Most dialog options have a Close option to close the box. Implemented here:
-    if(i == 'input Selected Close'):
-        action("HideDialog()")
-        action("ClearDialog()")
-        action("SetRight(null)")
-        action("SetLeft(null)")
-        action("EnableInput()")
-        action("EnableInput()")
-        
     #The following dialog options are all only available in different parts of the ending cutscene.
 
     #First, the accused talks to the king
     if(i == 'input Selected Next'):
-        accused_response = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + ", the " + accused.role + ", to the King, and that character is about to be put into jail. Respond with only the words that the accused character says before they are sent to jail.")
-        accused_response = accused_response.replace('"','')
-        expression = gpt_call("This is a line of dialogue: " + accused_response + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
-        expression = expression.replace('"', '')
-        action("SetExpression(\""+accused.name+"\",\""+expression+"\")")
-        action("SetDialog(\""+accused.name+": "+accused_response+" [To Jail|To Jail!]\")")
         action("SetRight("+accused.name+")")
+        accused_response = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " " + player + " has accused " + accused.name + ", the " + accused.role + ", to the King, and that character is about to be put into jail. Respond with only the words that the accused character says before they are sent to jail. They should be surprised.")
+        accused_response = accused_response.replace('"','')
+        action("SetExpression(\""+accused.name+"\",\"surprised\")")
+        action("SetDialog(\""+accused.name+": "+accused_response+" [To Jail|To Jail!]\")")
         action("ShowDialog()")
 
     #Then, the accused and the player go to the jail
@@ -399,32 +285,28 @@ while(True):
         action("HideDialog()")
         action("ClearDialog()")
         action("SetExpression(\""+accused.name+"\",neutral)")
-        action("SetRight(null)")
-        action("SetLeft(null)")
+        action("SetRight("+accused.name+")")
+        action("SetLeft("+player+")")
         action("FadeOut()")
         action("CreatePlace(Dungeon,Dungeon")
         moveTo("Dungeon.CellDoor")
         action("SetPosition("+accused.name+",Dungeon.RoundTable)")
         action("Face("+player+","+accused.name+")")
         action("Face("+accused.name+","+player+")")
-        correct = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + " of the crime. Answer /""Yes/"" or /""No/"" only- was the player correct?")
+        correct = gpt_call("This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + " of the crime. Answer /""Yes/"" or /""No/"" only- was the player correct?")
         if("Yes" in correct):
             win = True
-            confession = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has correctly accused " + accused.name + ", the " + accused.role + " of the crime. "+accused.name +" is now in jail. Respond with the words of this characters confession to the crime.")
+            confession = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " " + player + " has correctly accused " + accused.name + ", the " + accused.role + " of the crime. "+accused.name +" is now in jail. Respond with the words of this characters confession to the crime. They should be angry.")
             confession = confession.replace('"','')
-            expression = gpt_call("This is a line of dialogue: " + confession + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
-            expression = expression.replace('"', '')
-            action("SetExpression(\""+accused.name+"\",\""+expression+"\")")
+            action("SetExpression(\""+accused.name+"\",\"angry\")")
             action("FadeIn()")
             action("SetDialog(\""+accused.name+": "+confession+" [Finish|Finish]\")")
             action("ShowDialog()")
         if("No" in correct):
             win = False
-            plea = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has incorrectly accused " + accused.name + ", the " + accused.role + " of the crime. "+accused.name +" is now in jail. Respond with only the words of what this character has to say to the player for throwing them in jail.")
+            plea = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " " + player + " has incorrectly accused " + accused.name + ", the " + accused.role + " of the crime. "+accused.name +" is now in jail. Respond with only the words of what this character has to say to " + player + " for throwing them in jail. They should be angry.")
             plea = plea.replace('"','')
-            expression = gpt_call("This is a line of dialogue: " + plea + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
-            expression = expression.replace('"', '')
-            action("SetExpression(\""+accused.name+"\",\""+expression+"\")")
+            action("SetExpression(\""+accused.name+"\",\"angry\")")
             action("FadeIn()")
             action("SetDialog(\""+accused.name+": "+plea+" [Finish|Finish]\")")
             action("ShowDialog()")
@@ -436,15 +318,116 @@ while(True):
         action("SetRight(null)")
         action("SetLeft(null)")
         action("FadeOut()")
-        story = story.replace('"','')
+        story = story.replace('"', "'")
         if win == True:
             action("SetDialog(\"Congratulations! You correctly identified the murderer. After more investigation, you are able to uncover the full story: " + story+"\")")
             action("ShowDialog()")
         if win == False:
-            action("SetDialog(\"You were unable to identify the correct murderer. In a dream, the ghost of "+victim+" presents you with the truth: " +story + "Despite knowing what happened, it is too late. The King no longer trusts you, and you are placed in jail for your gross incompetence. Better luck next time!\")")
+            action("SetDialog(\"You were unable to identify the correct murderer. In a dream, the ghost of "+victim+" presents you with the truth: " +story + " Despite knowing what happened, it is too late. The King no longer trusts you, and you are placed in jail for your gross incompetence. Better luck next time!\")")
             action("ShowDialog()")
         
-#These if statements tie different parts of the map to different doors.
+    #Open Inventory:
+    if(i == 'input Key Inventory'):
+        action("ShowList({})".format(player))
+
+    #Close Inventory:
+    if(i == 'input Close List'):
+        action("HideList()")
+        action("EnableInput")
+
+    if(i == 'input Review Conversations '+ char_names[1]+" Book"):
+      rev_conv(char1convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[1]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[2]+" Book"):
+      rev_conv(char2convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[2]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[3]+" Book"):
+      rev_conv(char3convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[3]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")  
+    if(i == 'input Review Conversations '+ char_names[4]+" Book"):
+      rev_conv(char4convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[4]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[5]+" Book"):
+      rev_conv(char5convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[5]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[6]+" Book"):
+      rev_conv(char6convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[6]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[7]+" Book"):
+      rev_conv(char7convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[7]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[8]+" Book"):
+      rev_conv(char8convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[8]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[9]+" Book"):
+      rev_conv(char9convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[9]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[10]+" Book"):
+      rev_conv(char10convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[10]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[11]+" Book"):
+      rev_conv(char11convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[11]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[12]+" Book"):
+      rev_conv(char12convo)
+      action("SetDialog(\"[Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[12]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+
+    if(i == 'input Selected Close Conversation'):
+        action("HideDialog()")
+        action("ClearDialog()")
+        action("SetRight(null)")
+        action("SetLeft(null)")
+
+    #Closing initial narration and initializing other characters
+    if(i == 'input Close Narration'):
+        action("HideNarration()")
+    
+    #Most dialog options have a Close option to close the box. Implemented here:
+    if(i == 'input Selected Close'):
+        action("HideDialog()")
+        action("ClearDialog()")
+        action("SetRight(null)")
+        action("SetLeft(null)")
+        action("EnableInput()")
+        action("EnableInput()")
+        
+    #These if statements tie different parts of the map to different doors.
     if(i == 'input Open Door City.BlueHouseDoor'):
         moveTo("AlchemyShop.Door")
     if(i == 'input Open Door AlchemyShop.Door'):
