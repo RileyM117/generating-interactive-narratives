@@ -396,6 +396,7 @@ while(True):
         action("SetRight(null)")
         action("SetLeft(null)")
         action("FadeOut()")
+        story = story.replace('"', "'")
         if win == True:
             action("SetDialog(\"Congratulations! You correctly identified the murderer. After more investigation, you are able to uncover the full story: " + story+"\")")
             action("ShowDialog()")
