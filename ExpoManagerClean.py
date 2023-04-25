@@ -103,7 +103,7 @@ while(True):
         action("SetNarration(\""+story2+"\")")
         action('ShowNarration()')
 
-#Dialogue code.
+    #Dialogue code.
     for j in char_list:
         if(i == 'input Talk to ' + j.name): #For all characters but the king:
             #A dialog box is created asking the user what they would like to say to the character they are interacting with.
@@ -131,14 +131,14 @@ while(True):
 
                 conversations.append(player + ": " + answer)
                 conversations.append(j.name + ": " + story3)
-            else:
+            else: #For the king:
                 #Can choose to start accusation process or speak to him like other NPCs.
                 action("SetDialog(\"" + king + ": Are you here to make an accusation? [Yes|Yes my lord.] [No|No my lord.]"+"\")")
                 action("SetRight(\""+king+"\")")
                 action("SetLeft(\""+player+"\")")
                 action("ShowDialog()")
         
-    #After you accuse someone:
+        #After you accuse someone:
         if(i == "input Accuse " + j.name + " " + king):
             accused = j
             action("FadeOut()")
@@ -157,7 +157,7 @@ while(True):
             action("SetLeft(\""+king+"\")")
             action("ShowDialog()")
 
-#If you say no when the king asks you if you are here to make an accusation, you can talk to him like a normal character.
+    #If you say no when the king asks you if you are here to make an accusation, you can talk to him like a normal character.
     if i == "input Selected No":
         action("SetDialog(\""+player+": No my lord."+"\")")
 
@@ -177,11 +177,10 @@ while(True):
         conversations.append(player + ": " + answer)
         conversations.append(king + ": " + story3)
 
-#Beginning of accusation process (what happens when you tell the king you are ready to accuse).
+    #Beginning of accusation process (what happens when you tell the king you are ready to accuse).
     if i == "input Selected Yes":
         action("SetDialog(\""+player+": Yes my lord."+"\")")
         action('SetDialog("Alright. Right click me again to choose the murderer. [Understood|Understood]"')
-
     if i == "input Selected Understood":
         action('HideDialog()')
         action('EnableInput()')
@@ -199,19 +198,21 @@ while(True):
         action('EnableIcon("Accuse '+char_names[11]+'", Mug,'+king+', Accuse '+char_names[11]+')') #barkeep
         action('EnableIcon("Accuse '+char_names[12]+'", Flask,'+king+', Accuse '+char_names[12]+')') #drunk
 
-    if(i == 'input arrived ' + player + ' position Camp.Exit'):
-        moveTo("City")
 
+    #Open Inventory:
     if(i == 'input Key Inventory'):
         action("ShowList({})".format(player))
 
+    #Close Inventory:
     if(i == 'input Close List'):
         action("HideList()")
 
+    #Opening notebook:
     if(i == 'input Review Conversations BlueBook'):
         action("SetNarration(\""+' '.join(conversations)+"\")")
         action("ShowNarration()")
-        
+
+    #Closing initial narration and initializing other characters
     if(i == 'input Close Narration'):
         action("HideNarration()")
         if city_char == False:
@@ -226,6 +227,7 @@ while(True):
                 action('EnableIcon("Talk to", Talk,'+i.name+', "Talk to '+i.name+'")')
                 city_char = True;
 
+    #Most dialog options have a Close option to close the box. Implemented here:
     if(i == 'input Selected Close'):
         action("HideDialog()")
         action("ClearDialog()")
@@ -234,6 +236,9 @@ while(True):
         action("EnableInput()")
         action("EnableInput()")
         
+    #The following dialog options are all only available in different parts of the ending cutscene.
+
+    #First, the accused talks to the king
     if(i == 'input Selected Next'):
         accused_response = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + " The player has accused " + accused.name + ", the " + accused.role + ", to the King, and that character is about to be put into jail. Respond with only the words that the accused character says before they are sent to jail.")
         accused_response = accused_response.replace('"','')
@@ -241,6 +246,7 @@ while(True):
         action("SetRight("+accused.name+")")
         action("ShowDialog()")
 
+    #Then, the accused and the player go to the jail
     if(i == 'input Selected To Jail'):
         action("HideDialog()")
         action("ClearDialog()")
@@ -267,7 +273,8 @@ while(True):
             plea = plea.replace('"','')
             action("SetDialog(\""+accused.name+": "+plea+" [Finish|Finish]\")")
             action("ShowDialog()")
-            
+
+    #Then the player gets a dialog box telling them if they were correct and what the secret story was.
     if(i == 'input Selected Finish'):
         action("HideDialog()")
         action("ClearDialog()")
@@ -306,6 +313,8 @@ while(True):
         moveTo("Courtyard.Gate")
     if(i == 'input arrived ' + player + ' position City.EastEnd'):
         moveTo("Camp.Exit")
+    if(i == 'input arrived ' + player + ' position Camp.Exit'):
+        moveTo("City")
     if(i == 'input arrived ' + player + ' position City.WestEnd'):
         moveTo("Courtyard.Exit")
     if(i == 'input arrived ' + player + ' position Courtyard.Exit'):
