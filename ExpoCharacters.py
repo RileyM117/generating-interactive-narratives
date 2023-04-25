@@ -56,12 +56,14 @@ witch = character(names.get_full_name(),'witch','G','white','gray','Spiky',1,'Wi
 #tavern
 barkeep = character(names.get_full_name(),'barkeep','B','green','blonde','Short',8,'Merchant','Tavern.Bar.Behind')
 drunk = character(names.get_full_name(),'drunk',random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','Tavern.FrontLeftStool')
+#victim
+victim = character(names.get_full_name(),'victim',random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','null')
 
 
 char_list = [main_char,blacksmith,alchemist,king,queen,city_rando,noble,merchant,witch,
-             librarian,student,barkeep,drunk]
+             librarian,student,barkeep,drunk,victim]
 char_names = [main_char.name,blacksmith.name,alchemist.name,king.name,queen.name,city_rando.name,noble.name,merchant.name,witch.name,
-             librarian.name,student.name,barkeep.name,drunk.name]
+             librarian.name,student.name,barkeep.name,drunk.name,victim.name]
 gpt_char_list = []
 
 for i in range(len(char_list)):
