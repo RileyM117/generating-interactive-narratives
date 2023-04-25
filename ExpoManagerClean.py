@@ -1,7 +1,3 @@
-#TODO: Notebook works but possible format changes needed
-#TODO: Final Cutscene
-
-#Imports:
 import tkinter as tk
 from tkinter import simpledialog
 from ExpoCharacters import char_list
@@ -19,6 +15,8 @@ os.environ["OPENAI_API_KEY"] = "sk-"
 conversations = []
 char1convo = []
 char2convo = []
+char3convo = []
+char4convo = []
 char5convo = []
 char6convo = []
 char7convo = []
@@ -85,7 +83,7 @@ story2 = gpt_call(prompt2)
 #Generates our notebook, and a prop for the blacksmith
 action("CreateItem(Sword,Sword)")
 action("CreateItem(BlueBook,BlueBook)")
-for i in char_list[1:3] + char_list[4:13]:
+for i in char_list[1:13]:
     action("CreateItem({} Book,BlueBook)".format(i.name))
     action("AddToList({} Book,""Conversations with {} the {}"")".format(i.name,i.name,i.role))
 #Generates player details
@@ -99,9 +97,17 @@ for i in char_list[0:1]:
 
 for i in char_list[0:1]:
     action("SetPosition({},{})".format(i.name,i.location))
-for i in char_list[1:3]+ char_list[5:13]:
+for i in char_list[1:13]:
     action('EnableIcon("Review Conversations", Research,{} Book, "Review Conversation",true)'.format(i.name))
-
+for i in char_list[1:]:
+                action("CreateCharacter({},{})".format(i.name,i.body))
+                action("SetEyeColor({},{})".format(i.name,i.eye_color))
+                action("SetHairColor({},{})".format(i.name,i.hair_color))
+                action("SetHairStyle({},{})".format(i.name,i.hairstyle))
+                action("SetSkinColor({},{})".format(i.name,i.skin_color))
+                action("SetClothing({},{})".format(i.name,i.outfit))
+                action("SetPosition({},{})".format(i.name,i.location))
+                action('EnableIcon("Talk to", Talk,'+i.name+', "Talk to '+i.name+'")')
 
 #Loading mostly complete- show menu.
 print("start ShowMenu()",flush=True)
@@ -134,9 +140,13 @@ while(True):
                 action("SetDialog(\""+player+": " + answer+"\")")
                 action("SetLeft(\""+player+"\")")
                 action('ShowDialog()')
+                
+                char_locs = 'The characters,' + ', '.join(char_names)  +'are in the blacksmiths shop, alchemists shop, Great Hall, GreatHall, City, Courtyard, Courtyard, Ruins, Library, Library, Tavern, and the Tavern respectively.' 
 
                 #GPT call to generate character's response
-                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + ". Based on this, " + player + " talks to " + j.name + ", and says: " + answer + ". What might " + j.name + " say back? Respond with only the words that " + j.name + " says to " + player + ".")
+
+                story3 = gpt_call("This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + char_locs + ". Based on this, " + player + " talks to " + j.name + ", and says: " + answer + ". What might " + j.name + " say back? Respond with only the words that " + j.name + " says to " + player + ".")
+
                 expression = gpt_call("This is a line of dialogue: " + story3 + "Would you consider the person who said this to be neutral, happy, sad, angry, disgusted, scared, surprised, or asleep? Respond with only your one word choice. It should be lowercase with no puncuation.")
                 story3 = story3.replace('"','')
                 expression = expression.replace('"', '')
@@ -153,6 +163,13 @@ while(True):
                 if j.name == char_names[2]:
                     char2convo.append(player + ": " + answer)
                     char2convo.append(j.name + ": " + story3)
+                if j.name == char_names[3]:
+                    char3convo.append(player + ": " + answer)
+                    char3convo.append(j.name + ": " + story3)
+                    
+                if j.name == char_names[4]:
+                    char4convo.append(player + ": " + answer)
+                    char4convo.append(j.name + ": " + story3)
                     
                 if j.name == char_names[5]:
                     char5convo.append(player + ": " + answer)
@@ -192,7 +209,7 @@ while(True):
                 action("SetRight(\""+king+"\")")
                 action("SetLeft(\""+player+"\")")
                 action("ShowDialog()")
-        
+               
         #After you accuse someone:
         if(i == "input Accuse " + j.name + " " + king):
             accused = j
@@ -219,7 +236,7 @@ while(True):
     if i == "input Selected No":
         action("SetDialog(\""+player+": No my lord."+"\")")
 
-        USER_INP = simpledialog.askstring(title="Response", prompt="What do you Say?:")
+        USER_INP = simpledialog.askstring(title="Response", prompt="What do you Say?:\t\t\t")
         answer = str(USER_INP)
         answer = answer.replace(',','')
         action("SetDialog(\""+player+": " + answer+"\")")
@@ -234,6 +251,10 @@ while(True):
 
         conversations.append(player + ": " + answer)
         conversations.append(king + ": " + story3)
+    
+        char3convo.append(player + ": " + answer)
+        char3convo.append(king + ": " + story3)
+        
 
     #Beginning of accusation process (what happens when you tell the king you are ready to accuse).
     if i == "input Selected Yes":
@@ -274,6 +295,16 @@ while(True):
     if(i == 'input Review Conversations '+ char_names[2]+" Book"):
       action("SetDialog(\""+' '.join(char2convo)+" [Close Conversation|Close Conversation]\")")
       action("SetRight(\""+char_names[2]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")
+    if(i == 'input Review Conversations '+ char_names[3]+" Book"):
+      action("SetDialog(\""+' '.join(char3convo)+" [Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[3]+"\")")
+      action("SetLeft(\""+player+"\")")
+      action("ShowDialog()")  
+    if(i == 'input Review Conversations '+ char_names[4]+" Book"):
+      action("SetDialog(\""+' '.join(char4convo)+" [Close Conversation|Close Conversation]\")")
+      action("SetRight(\""+char_names[4]+"\")")
       action("SetLeft(\""+player+"\")")
       action("ShowDialog()")
     if(i == 'input Review Conversations '+ char_names[5]+" Book"):
@@ -320,17 +351,17 @@ while(True):
     #Closing initial narration and initializing other characters
     if(i == 'input Close Narration'):
         action("HideNarration()")
-        if city_char == False:
-            for i in char_list[1:]:
-                action("CreateCharacter({},{})".format(i.name,i.body))
-                action("SetEyeColor({},{})".format(i.name,i.eye_color))
-                action("SetHairColor({},{})".format(i.name,i.hair_color))
-                action("SetHairStyle({},{})".format(i.name,i.hairstyle))
-                action("SetSkinColor({},{})".format(i.name,i.skin_color))
-                action("SetClothing({},{})".format(i.name,i.outfit))
-                action("SetPosition({},{})".format(i.name,i.location))
-                action('EnableIcon("Talk to", Talk,'+i.name+', "Talk to '+i.name+'")')
-                city_char = True;
+        #if city_char == False:
+        #    for i in char_list[1:]:
+        #        action("CreateCharacter({},{})".format(i.name,i.body))
+        #        action("SetEyeColor({},{})".format(i.name,i.eye_color))
+        #        action("SetHairColor({},{})".format(i.name,i.hair_color))
+        #        action("SetHairStyle({},{})".format(i.name,i.hairstyle))
+        #        action("SetSkinColor({},{})".format(i.name,i.skin_color))
+        #        action("SetClothing({},{})".format(i.name,i.outfit))
+        #        action("SetPosition({},{})".format(i.name,i.location))
+        #        action('EnableIcon("Talk to", Talk,'+i.name+', "Talk to '+i.name+'")')
+        #        city_char = True;
     
     if(i == 'input Selected Close Conversation'):
         action("HideDialog()")
