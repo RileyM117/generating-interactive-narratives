@@ -85,7 +85,7 @@ story2 = gpt_call(prompt2)
 #Generates our notebook, and a prop for the blacksmith
 action("CreateItem(Sword,Sword)")
 action("CreateItem(BlueBook,BlueBook)")
-for i in char_list[1:3] + char_list[5:]:
+for i in char_list[1:3] + char_list[5:13]:
     action("CreateItem({} Book,BlueBook)".format(i.name))
     action("AddToList({} Book,""{} conversations"")".format(i.name,i.name))
 #Generates player details
