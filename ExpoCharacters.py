@@ -58,7 +58,6 @@ barkeep = character(names.get_full_name(gender='female'),'barkeep','B','green','
 drunk = character(names.get_full_name(gender='female'),'drunk',random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','Tavern.FrontLeftStool')
 victim = character(names.get_full_name(),'victim',random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','null')
 
-
 char_list = [main_char,blacksmith,alchemist,king,queen,city_rando,noble,merchant,witch,
              librarian,student,barkeep,drunk,victim]
 char_names = [main_char.name,blacksmith.name,alchemist.name,king.name,queen.name,city_rando.name,noble.name,merchant.name,witch.name,
@@ -72,5 +71,3 @@ for i in range(len(char_list)):
 for i in char_list:
   i.get_char()
   i.set_loc()
-
-
