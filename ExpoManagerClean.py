@@ -9,7 +9,7 @@ import os
 import time
 
 #OpenAI API Key:
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "sk-"
 
 #Initialization
 conversations = []
