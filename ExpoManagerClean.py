@@ -388,7 +388,6 @@ while(True):
             action("SetDialog(\"You were unable to identify the correct murderer. Feeling that something was wrong, the king brought in another investigator who revealed the truth: " +story + "You are placed in jail for your gross incompetence. Better luck next time!\")")
             action("ShowDialog()")
         
-        
 #These if statements tie different parts of the map to different doors.
     if(i == 'input Open Door City.BlueHouseDoor'):
         moveTo("AlchemyShop.Door")
