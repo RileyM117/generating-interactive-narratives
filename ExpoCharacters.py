@@ -37,26 +37,25 @@ class character(object):
 #Creates the characters for the expo demo. Some are randomly generated, some are set based on their roles
 main_char = character(names.get_full_name(),'main_char',random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),random.choice(outfits),'Camp')
 # Blacksmith's
-blacksmith = character(names.get_full_name(),'blacksmith','F','brown','black','Short_Beard',3,'Peasant','Blacksmith.Anvil')
+blacksmith = character(names.get_full_name(gender='male'),'blacksmith','F','brown','black','Short_Beard',3,'Peasant','Blacksmith.Anvil')
 #Alchemy Shop
-alchemist  = character(names.get_full_name(),'alchemist','C','blue','blonde','Short',4,'Merchant','AlchemyShop.Bar.Behind')
+alchemist  = character(names.get_full_name(gender='female'),'alchemist','C','blue','blonde','Short',4,'Merchant','AlchemyShop.Bar.Behind')
 # GreatHall
-king = character(names.get_full_name(),'king','H','blue','blonde','Musketeer_Beard',3,'King','GreatHall.LeftThrone')
-queen = character(names.get_full_name(),'queen','G','blue','red','Straight',3,'Queen','GreatHall.Throne')
+king = character(names.get_full_name(gender='male'),'king','H','blue','blonde','Musketeer_Beard',3,'King','GreatHall.LeftThrone')
+queen = character(names.get_full_name(gender='female'),'queen','G','blue','red','Straight',3,'Queen','GreatHall.Throne')
 #city 
-city_rando = character(names.get_full_name(),'civilian',random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),random.choice(outfits),'City.Plant')
+city_rando = character(names.get_full_name(gender='male'),'civilian',random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),random.choice(outfits),'City.Plant')
 #courtyard
-noble = character(names.get_full_name(),'noble',random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Noble','Courtyard')
-merchant = character(names.get_full_name(),'merchant',random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Merchant','Courtyard.BigStall.Right')
+noble = character(names.get_full_name(gender='male'),'noble',random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Noble','Courtyard')
+merchant = character(names.get_full_name(gender='male'),'merchant',random.choice(male_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_male),random.choice(skin_colors),'Merchant','Courtyard.BigStall.Right')
 #Library
-librarian = character(names.get_full_name(),'librarian','A','black','blonde','Short',7,'Peasant','Library.Chair')
-student = character(names.get_full_name(),'student','A','green','black','Long',4,'Noble','Library.SpellBook')
+librarian = character(names.get_full_name(gender='female'),'librarian','A','black','blonde','Short',7,'Peasant','Library.Chair')
+student = character(names.get_full_name(gender='female'),'student','A','green','black','Long',4,'Noble','Library.SpellBook')
 #ruins
-witch = character(names.get_full_name(),'witch','G','white','gray','Spiky',1,'Witch','Ruins.Throne')
+witch = character(names.get_full_name(gender='female'),'witch','G','white','gray','Spiky',1,'Witch','Ruins.Throne')
 #tavern
-barkeep = character(names.get_full_name(),'barkeep','B','green','blonde','Short',8,'Merchant','Tavern.Bar.Behind')
-drunk = character(names.get_full_name(),'drunk',random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','Tavern.FrontLeftStool')
-#victim
+barkeep = character(names.get_full_name(gender='female'),'barkeep','B','green','blonde','Short',8,'Merchant','Tavern.Bar.Behind')
+drunk = character(names.get_full_name(gender='female'),'drunk',random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','Tavern.FrontLeftStool')
 victim = character(names.get_full_name(),'victim',random.choice(female_body_types),random.choice(eye_colors),random.choice(hair_colors),random.choice(hairstyles_female),random.choice(skin_colors),'Peasant','null')
 
 
@@ -73,3 +72,5 @@ for i in range(len(char_list)):
 for i in char_list:
   i.get_char()
   i.set_loc()
+
+
