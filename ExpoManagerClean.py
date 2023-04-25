@@ -13,7 +13,7 @@ import os
 import time
 
 #OpenAI API Key:
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 
 #Initialization
 conversations = []
@@ -85,9 +85,9 @@ story2 = gpt_call(prompt2)
 #Generates our notebook, and a prop for the blacksmith
 action("CreateItem(Sword,Sword)")
 action("CreateItem(BlueBook,BlueBook)")
-for i in char_list[1:3] + char_list[5:13]:
+for i in char_list[1:3] + char_list[4:13]:
     action("CreateItem({} Book,BlueBook)".format(i.name))
-    action("AddToList({} Book,""{} conversations"")".format(i.name,i.name))
+    action("AddToList({} Book,""Conversations with {} the {}"")".format(i.name,i.name,i.role))
 #Generates player details
 for i in char_list[0:1]:
     action("CreateCharacter({},{})".format(i.name,i.body))
