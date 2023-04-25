@@ -29,6 +29,7 @@ char11convo = []
 char12convo = []
 player = char_list[0].name
 king = char_list[3].name
+victim = char_list[13].name
 
 #Basic Camelot action structure.
 def action(command):
@@ -76,7 +77,8 @@ for d in door_list:
     door_icon(d)
 
 #First two GPT calls generate a secret story that GPT knows and an introductory narrative for the player.
-init_prompt = "These are the characters you can use: " +  ', '.join(gpt_char_list[1:]) + ". These are the locations you can use: " + ', '.join(definite_locations) + ". Write an unsolved murder mystery set in a medieval/fantasy setting using these characters and locations. Do not include an investigation or an investigator character. The characters should know some information. The murder should remain unsolved, but you should know who the murderer is."
+init_prompt = "These are the characters you can use: " +  ', '.join(gpt_char_list[1:]) + ". These are the locations you can use: " + ', '.join(definite_locations) + ". Write an unsolved murder mystery set in a medieval/fantasy setting using these characters and locations, with the victim being "+victim+". Do not include an investigation or an investigator character. The characters should know some information. The murder should remain unsolved, but you should know who the murderer is."
+
 story = gpt_call(init_prompt)
 prompt2 = "This is the initial prompt that I gave you: " + init_prompt + "This is the murder mystery that you wrote: " + story + "Based on this story, provide a very short description to give to the player to initiate their investigation. The player is currently in the forest camp and should seek out other characters to gain clues from. When they want to accuse someone, they should go talk to the king in the Great Hall. Also, they can press 'I' to review conversations. Tell the player all of this in a short description that doesn't give away the mystery. Respond only with the description."
 story2 = gpt_call(prompt2)
@@ -84,9 +86,10 @@ story2 = gpt_call(prompt2)
 #Generates our notebook, and a prop for the blacksmith
 action("CreateItem(Sword,Sword)")
 action("CreateItem(BlueBook,BlueBook)")
-for i in char_list[1:3] + char_list[5:]:
+for i in char_list[1:3] + char_list[4:13]:
     action("CreateItem({} Book,BlueBook)".format(i.name))
-    action("AddToList({} Book,""{} conversations"")".format(i.name,i.name))
+    action("AddToList({} Book,""Conversations with {} the {}"")".format(i.name,i.name,i.role))
+    
 #Generates player details
 for i in char_list[0:1]:
     action("CreateCharacter({},{})".format(i.name,i.body))
@@ -98,7 +101,7 @@ for i in char_list[0:1]:
 
 #Loading mostly complete- show menu.
 print("start ShowMenu()",flush=True)
-
+  
 #Things that need to happen after start button is pressed:
 while(True):
     i = input()
@@ -113,6 +116,10 @@ while(True):
         action("SetNarration(\""+story2+"\")")
         action('ShowNarration()')
         
+    #Need to load this input statement first as this is the first location the player reaches
+    if(i == 'input arrived ' + player + ' position Camp.Exit'):
+        moveTo("City")
+
     #Need to load this input statement first as this is the first location the player reaches
     if(i == 'input arrived ' + player + ' position Camp.Exit'):
         moveTo("City")
