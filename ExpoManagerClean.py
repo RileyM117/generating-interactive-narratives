@@ -112,6 +112,10 @@ while(True):
         action('HideMenu()')
         action("SetNarration(\""+story2+"\")")
         action('ShowNarration()')
+        
+    #Need to load this input statement first as this is the first location the player reaches
+    if(i == 'input arrived ' + player + ' position Camp.Exit'):
+        moveTo("City")
 
     #Dialogue code.
     for j in char_list:
@@ -416,8 +420,6 @@ while(True):
         moveTo("Courtyard.Gate")
     if(i == 'input arrived ' + player + ' position City.EastEnd'):
         moveTo("Camp.Exit")
-    if(i == 'input arrived ' + player + ' position Camp.Exit'):
-        moveTo("City")
     if(i == 'input arrived ' + player + ' position City.WestEnd'):
         moveTo("Courtyard.Exit")
     if(i == 'input arrived ' + player + ' position Courtyard.Exit'):
